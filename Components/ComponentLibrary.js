@@ -154,7 +154,7 @@ export class RequestResponceNOtification extends React.Component {
                 <View>{
                     this.props.data.map((item, index) => {
                         return (
-                            <View style={{backgroundColor: (index + 1)%2 === 0 ?  '#rgba(0,0,0, 0.05)' : '#rgba(0,0,0,0)'}} key={`${item.Description}${item.Remarks}${item.ID}`}>
+                            <View style={{ backgroundColor: (index + 1) % 2 === 0 ? '#rgba(0,0,0, 0.05)' : '#rgba(0,0,0,0)' }} key={`${item.Description}${item.Remarks}${item.ID}`}>
                                 <View style={{ marginVertical: 5 }}>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={{ fontSize: 23 * aspectRatio }}>
@@ -194,7 +194,7 @@ export class RequestResponceNOtification extends React.Component {
                                     index < this.props.data.length - 1 ?
                                         <View style={{ height: 1, width: '100%', backgroundColor: '#rgba(0,0,0, 0.2)' }}></View> : null
                                     */
-                                    }
+                                }
                                 </View>
                             </View>
                         );
@@ -220,7 +220,7 @@ export class LeaveOnToday extends React.Component {
                 <View>{
                     this.props.data.map((item, index) => {
                         return (
-                            <View style={{backgroundColor: (index + 1)%2 === 0 ?  '#rgba(0,0,0, 0.05)' : '#rgba(0,0,0,0)'}} key={MakeID(8)}>
+                            <View style={{ backgroundColor: (index + 1) % 2 === 0 ? '#rgba(0,0,0, 0.05)' : '#rgba(0,0,0,0)' }} key={MakeID(8)}>
 
                                 <View style={{ flexDirection: 'row' }}>
                                     <Text style={{ fontSize: 23 * aspectRatio }}>
@@ -304,20 +304,26 @@ export class BirthdayNotification extends React.Component {
                 <View>{
                     this.props.data.map((item, index) => {
                         return (
-                            <View key={`${item.DOB}${index}${item.EmployeeName}`}>
-                                <Text style={{ fontSize: 23 * aspectRatio }}>{
-                                    `${item.EmployeeName}'s birthday on`
-                                }
-                                </Text>
+                            <View style={{ backgroundColor: (index + 1) % 2 === 0 ? '#rgba(0,0,0, 0.05)' : '#rgba(0,0,0,0)' }} key={`${item.Description}${item.Remarks}${item.ID}`}>
+                                <View style={{ marginVertical: 5 }} key={`${item.DOB}${index}${item.EmployeeName}`}>
+                                    <Text style={{ fontSize: 23 * aspectRatio }}>{
+                                        `${item.EmployeeName}'s birthday on`
+                                    }
+                                    </Text>
 
-                                <Text style={{ fontSize: 23 * aspectRatio, fontWeight: "700", color: colorPallet.theme.default.accentColor2 }}>{
-                                    GetBirtDay(item.DOB)
-                                }
-                                </Text>
-                                {
-                                    index < this.props.data.length - 1 ?
-                                        <View style={{ height: 1, width: '100%', backgroundColor: 'gray' }}></View> : null
-                                }
+                                    <Text style={{ fontSize: 23 * aspectRatio, fontWeight: "700", color: colorPallet.theme.default.accentColor2 }}>{
+                                        GetBirtDay(item.DOB)
+                                    }
+                                    </Text>
+
+                                    {
+                                        /*
+                                        index < this.props.data.length - 1 ?
+                                            <View style={{ height: 1, width: '100%', backgroundColor: 'gray' }}></View> : null
+                                        */
+                                    }
+
+                                </View>
                             </View>
                         );
                     })
@@ -612,7 +618,7 @@ export class DropDownList extends React.Component {
                                         //<DropList.Item label={item.Description} value={item.ID} />
 
                                         <Dropwown_Button
-                                        key={`${item.Description}${item.ID}${index}`}
+                                            key={`${item.Description}${item.ID}${index}`}
                                             label={item.Description}
                                             value={item.ID}
                                             onValueChange={this.onValueChange}
@@ -859,9 +865,9 @@ const HeadingText_Style = StyleSheet.create({
         fontSize: 30 * aspectRatio,
         fontWeight: "700",
         color: colorPallet.theme.default.headingTextColor,
-        textAlign:'center',
-        width:'100%',
-        
+        textAlign: 'center',
+        width: '100%',
+
     }
 })
 
@@ -1250,7 +1256,7 @@ const Button_Outline_Style = StyleSheet.create({
         alignItems: 'center'
     },
     innerContainer: {
-        borderWidth:1,
+        borderWidth: 1,
         borderColor: colorPallet.theme.default.accentColor,
         width: '100%',
         justifyContent: 'center',
