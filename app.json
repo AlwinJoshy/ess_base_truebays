@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "ess-dxl",
+    "slug": "ess-dxl",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#edede8"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "ess.test.appd"
+    },
+    "android": {
+      "versionCode": 3,
+      "permissions": [],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#edede8"
+      },
+      "package": "ess.test.appd"
+    },
+    "web": {
+      "favicon": "./assets/favicon-modernvet.png"
+    }
+  }
+}

@@ -1,0 +1,42 @@
+  	{
+  		"type": "PSR",
+        "iconName": "money",
+        "iconType": "FontAwesome",
+        "screenName": "DynamicList",
+        "buttonTitle": "Payslip",
+    },
+    {
+    	"type": "REQSC",
+        "iconName": "certificate-outline",
+        "iconType": "MaterialCommunityIcons",
+        "screenName": "DynamicList",
+        "buttonTitle": "Salary Certificate",
+    },
+    {
+    	"type": "NOCDL",
+        "iconName": "car",
+        "iconType": "AntDesign",
+        "screenName": "DynamicList",
+        "buttonTitle": "Salary Certificate",
+    },
+    {
+    	"type": "NOCGSC",
+        "iconName": "emoji-happy",
+        "iconType": "Entypo",
+        "screenName": "DynamicList",
+        "buttonTitle": "Salary Certificate",
+    },
+    {
+    	"type": "NOCMMI",
+        "iconName": "file-medical-alt",
+        "iconType": "FontAwesome5",
+        "screenName": "DynamicList",
+        "buttonTitle": "NOC For MMI",
+    },
+    {
+    	"type": "LVR",
+        "iconName": "aircraft",
+        "iconType": "Entypo",
+        "screenName": "DynamicList",
+        "buttonTitle": "Leave Request",
+    }

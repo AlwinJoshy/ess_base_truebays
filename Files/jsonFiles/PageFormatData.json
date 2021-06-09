@@ -1,0 +1,277 @@
+{
+    "PSR": {
+        "pageFormat": {
+            "pageName": "Salary Request",
+            "listDisplayUrl": "essapi/CommonApi/",
+            "listFieldType": "DateAddressRemarkStrip",
+            "recordDataKeys": {
+                "titleKey": "Remarks",
+                "dateKey": "SubmittedDate",
+                "subNoteKey": "ToAddress"
+            },
+            "addUrl": "essapi/ReqSalaryCertificateApi/",
+            "editUrl": "essapi/ReqSalaryCertificateApi/",
+            "deleteUrl": "essapi/ReqSalaryCertificateApi/",
+            "subPage": {
+                "addPageName": "Add Pay Slip Request",
+                "editPageName": "Edit Pay Slip Request",
+                "dynamicElements": [
+                    {
+                        "fieldName": "dropDown",
+                        "captionText": "Req#",
+                        "objectParameterKey": "RequestID",
+                        "options": [
+                            "111A",
+                            "222B",
+                            "333C",
+                            "444D"
+                        ]
+                    },
+                    {
+                        "fieldName": "textArea",
+                        "captionText": "Remarks",
+                        "objectParameterKey": "Remarks"
+                    },
+                    {
+                        "fieldName": "date",
+                        "captionText": "From Date",
+                        "objectParameterKey": "SubmittedDate"
+                    },
+                    {
+                        "fieldName": "date",
+                        "captionText": "To Date",
+                        "objectParameterKey": "SubmittedDate"
+                    },
+                    {
+                        "fieldName": "dropDown",
+                        "captionText": "Reason",
+                        "objectParameterKey": "Reason",
+                        "options": [
+                            "Reason - A",
+                            "Reason - B",
+                            "Reason - B",
+                            "Reason - D"
+                        ]
+                    },
+                    {
+                        "fieldName": "submitButton",
+                        "captionText": "Submit"
+                    }
+                ]
+            }
+        }
+    },
+    "REQSC": {
+        "pageFormat": {
+            "pageName": "Salary Request",
+            "listDisplayUrl": "essapi/CommonApi/",
+            "listFieldType": "DateAddressRemarkStrip",
+            "recordDataKeys": {
+                "titleKey": "Remarks",
+                "dateKey": "SubmittedDate",
+                "subNoteKey": "ToAddress"
+            },
+            "addUrl": "essapi/ReqSalaryCertificateApi/",
+            "editUrl": "essapi/ReqSalaryCertificateApi/",
+            "deleteUrl": "essapi/ReqSalaryCertificateApi/",
+            "subPage": {
+                "addPageName": "Add Salary Request",
+                "editPageName": "Edit Salary Request",
+                "dynamicElements": [
+                    {
+                        "fieldName": "date",
+                        "captionText": "Request Date",
+                        "objectParameterKey": "SubmittedDate"
+                    },
+                    {
+                        "fieldName": "textField",
+                        "captionText": "Address To",
+                        "objectParameterKey": "ToAddress"
+                    },
+                    {
+                        "fieldName": "textArea",
+                        "captionText": "Remarks",
+                        "objectParameterKey": "Remarks"
+                    },
+                    {
+                        "fieldName": "submitButton",
+                        "captionText": "Submit"
+                    }
+                ]
+            }
+        }
+    },
+    "NOCDL": {
+        "pageFormat": {
+            "pageName": "Driving Licence",
+            "listDisplayUrl": "essapi/CommonApi/",
+            "listFieldType": "DateAddressRemarkStrip",
+            "recordDataKeys": {
+                "titleKey": "Remarks",
+                "dateKey": "SubmittedDate",
+                "subNoteKey": "ToAddress"
+            },
+            "addUrl": "essapi/ReqSalaryCertificateApi/",
+            "editUrl": "essapi/ReqSalaryCertificateApi/",
+            "deleteUrl": "essapi/ReqSalaryCertificateApi/",
+            "subPage": {
+                "addPageName": "Add NOC For Driving License",
+                "editPageName": "Edit NOC For Driving License",
+                "dynamicElements": [
+                    {
+                        "fieldName": "date",
+                        "captionText": "Application Date",
+                        "objectParameterKey": "SubmittedDate"
+                    },
+                    {
+                        "fieldName": "textField",
+                        "captionText": "Address To",
+                        "objectParameterKey": "ToAddress"
+                    },
+                    {
+                        "fieldName": "textArea",
+                        "captionText": "Remarks",
+                        "objectParameterKey": "Remarks"
+                    },
+                    {
+                        "fieldName": "submitButton",
+                        "captionText": "Submit"
+                    }
+                ]
+            }
+        }
+    },
+    "NOCGSC": {
+        "pageFormat": {
+            "pageName": "NOC For Good Standing Certificate",
+            "listDisplayUrl": "essapi/CommonApi/",
+            "listFieldType": "DateAddressRemarkStrip",
+            "recordDataKeys": {
+                "titleKey": "Remarks",
+                "dateKey": "SubmittedDate",
+                "subNoteKey": "ToAddress"
+            },
+            "addUrl": "essapi/ReqSalaryCertificateApi/",
+            "editUrl": "essapi/ReqSalaryCertificateApi/",
+            "deleteUrl": "essapi/ReqSalaryCertificateApi/",
+            "subPage": {
+                "addPageName": "Add NOC For Good Standing Certificate",
+                "editPageName": "Edit NOC For Good Standing Certificate",
+                "dynamicElements": [
+                    {
+                        "fieldName": "date",
+                        "captionText": "Request Date",
+                        "objectParameterKey": "SubmittedDate"
+                    },
+                    {
+                        "fieldName": "textField",
+                        "captionText": "Address To",
+                        "objectParameterKey": "ToAddress"
+                    },
+                    {
+                        "fieldName": "textArea",
+                        "captionText": "Remarks",
+                        "objectParameterKey": "Remarks"
+                    },
+                    {
+                        "fieldName": "submitButton",
+                        "captionText": "Submit"
+                    }
+                ]
+            }
+        }
+    },
+    "NOCMMI": {
+        "pageFormat": {
+            "pageName": "NOC For MMI",
+            "listDisplayUrl": "essapi/CommonApi/",
+            "listFieldType": "DateAddressRemarkStrip",
+            "recordDataKeys": {
+                "titleKey": "Remarks",
+                "dateKey": "SubmittedDate",
+                "subNoteKey": "ToAddress"
+            },
+            "addUrl": "essapi/ReqSalaryCertificateApi/",
+            "editUrl": "essapi/ReqSalaryCertificateApi/",
+            "deleteUrl": "essapi/ReqSalaryCertificateApi/",
+            "subPage": {
+                "addPageName": "Add NOC For MMI",
+                "editPageName": "Edit NOC For MMI",
+                "dynamicElements": [
+                    {
+                        "fieldName": "date",
+                        "captionText": "Application Date",
+                        "objectParameterKey": "SubmittedDate"
+                    },
+                    {
+                        "fieldName": "textField",
+                        "captionText": "Address To",
+                        "objectParameterKey": "ToAddress"
+                    },
+                    {
+                        "fieldName": "textArea",
+                        "captionText": "Remarks",
+                        "objectParameterKey": "Remarks"
+                    },
+                    {
+                        "fieldName": "submitButton",
+                        "captionText": "Submit"
+                    }
+                ]
+            }
+        }
+    },
+    "LVR": {
+        "pageFormat": {
+            "pageName": "Salary Request",
+            "listDisplayUrl": "essapi/CommonApi/",
+            "listFieldType": "DateAddressRemarkStrip",
+            "recordDataKeys": {
+                "titleKey": "Remarks",
+                "dateKey": "SubmittedDate",
+                "subNoteKey": "ToAddress"
+            },
+            "addUrl": "essapi/ReqSalaryCertificateApi/",
+            "editUrl": "essapi/ReqSalaryCertificateApi/",
+            "deleteUrl": "essapi/ReqSalaryCertificateApi/",
+            "subPage": {
+                "addPageName": "Add Leave Request",
+                "editPageName": "Edit Leave Request",
+                "dynamicElements": [
+                    {
+                        "fieldName": "date",
+                        "captionText": "From Date",
+                        "objectParameterKey": "SubmittedDate"
+                    },
+                    {
+                        "fieldName": "date",
+                        "captionText": "To Date",
+                        "objectParameterKey": "SubmittedDate"
+                    },
+                    {
+                        "fieldName": "textArea",
+                        "captionText": "Reason",
+                        "objectParameterKey": "Reason"
+                    },
+                    {
+                        "fieldName": "dropDown",
+                        "captionText": "Leave Type",
+                        "objectParameterKey": "LeaveType",
+                        "options": [
+                            "Maternity Leave",
+                            "Annual Leave",
+                            "Hajj Leave",
+                            "Paternity Leave",
+                            "UAE Navigation Licence",
+                            "Radio Station Licence"
+                        ]
+                    },
+                    {
+                        "fieldName": "submitButton",
+                        "captionText": "Submit"
+                    }
+                ]
+            }
+        }
+    },
+}

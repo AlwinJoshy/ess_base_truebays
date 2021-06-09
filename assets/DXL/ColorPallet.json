@@ -1,0 +1,27 @@
+{
+    "theme": {
+        "default": {
+            "primaryColor": "#18196b",
+            "secondaryColor": "#FFFFFF",
+            "secondaryDarkColor": "#111254",
+            "secondaryAccentColor": "#072F45",
+            "secondaryDefinitionColor": "#deded5",
+            "accentColor": "#43e890",
+            "accentColor2": "#292b55",
+            "neutral": "#072F45",
+            "subTextColor": "#bbb",
+            "buttonTextColor": "#222",
+            "buttonTextSize": 30,
+            "labelTextColor": "#aaa",
+            "headingTextColor": "#fff",
+            "labelTextSize": 20,
+            "iconColor": "#222",
+            "iconSize": 30,
+            "leaveUsedColor": "#E25E9F",
+            "leaveAvilableColor": "#51cfa3",
+            "shadowColor": "#000",
+            "shadowOpacity": "0.5",
+            "shadowElevation": "10"
+        }
+    }
+}
