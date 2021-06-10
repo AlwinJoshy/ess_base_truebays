@@ -202,20 +202,34 @@ export const PayslipSheet_Screen = ({ navigation }) => {
 
     const [InfoData, setInfoData] = useState(null);
     const [refreshing, setRefreshing] = useState(false);
+    const [monthSlipArray, setSetSlipArray] = useState(null);
+    const [slipData, setSlipDataObject] = useState({});
 
-    const LoadInfoDisplayDetails = () => {
+    var Deductions = [1, 1, 1, 1, 1]
 
+    const LoadSlip = (id) => {
+        GETAPIRequest(`${storeLib.baseUrl}essapi/PaySlipApi/GetPayslipDetails`, ['PayrollID', id, 'EmployeeID', 'MVC01']).then(res => {
+            setSlipDataObject(res);
+            console.log(res);
+        }).catch(err => console.log(err));
+    }
+
+    const LoadPayslipData = () => {
+        GETAPIRequest(`${storeLib.baseUrl}/essapi/PaySlipApi/GetMonthDetails`, ['EmployeeID', 'MVC01']).then(res => {
+            setSetSlipArray(res);
+            LoadSlip(res[res.length - 1].ID);
+        }).catch(err => console.log(err));
     }
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        LoadInfoDisplayDetails();
+        LoadPayslipData();
         wait(2000).then(() => setRefreshing(false));
     }, []);
 
     useEffect(() => {
         /// console.log(storeLib.companyCode);
-        if (InfoData == null) LoadInfoDisplayDetails();
+        if (InfoData == null) LoadPayslipData();
     }, [])
 
 
@@ -228,11 +242,13 @@ export const PayslipSheet_Screen = ({ navigation }) => {
                     <View style={{ width: '85%' }}>
                         <DropDownList
                             //  key={`${componentName.fieldName}${componentName.captionText}`}
-                            selectedValue={1}
+                        
+                            selectedValue={monthSlipArray != undefined && monthSlipArray != null && monthSlipArray.length !== 0 ? monthSlipArray.length : 0}
                             // labelText={"componentName.captionText"}
-                            dropItems={[{ Description: "May 2021", ID: 1 }, { Description: 100, ID: 1 }, { Description: 100, ID: 1 }]}
+                            dropItems={monthSlipArray}
                             setValueFunction={(itemValue, itemIndex) => {
-                                console.log(itemValue);
+                                console.log(itemValue + "-" + itemIndex);
+                                LoadSlip(itemIndex);
                                 //    newDynamicObject.recordState(itemValue);
                                 //   console.log(itemValue + JSON.stringify(newDynamicObject));
                             }}
@@ -242,12 +258,38 @@ export const PayslipSheet_Screen = ({ navigation }) => {
                 </View>
 
                 <InfoCard heading={`Earnings`}>
-                    <NameAndValueStrip valueName="Total Earning" value={0.00} />
+                    <View key={MakeID(8)}>
+                        <View>{
+                         //   console.log("tahe length : " + slipData.Earnings !== undefined ? slipData.Earnings.length : "wdad"),
+
+                            slipData.Earnings != null ? slipData.Earnings.map((item, index) => {
+                                return (
+                                    <View style={{ backgroundColor: (index + 1) % 2 === 0 ? '#rgba(0,0,0, 0.05)' : '#rgba(0,0,0,0)' }} key={MakeID(8)}>
+                                        <NameAndValueStrip valueName={item.name} value={"AED " + item.amount} />
+                                    </View>);
+                            }) : <NameAndValueStrip valueName="No Earnings" value={0} />
+
+                        }
+                        </View>
+                    </View>
                 </InfoCard>
                 <InfoCard heading={`Deductions`}>
-                    <NameAndValueStrip valueName="Total Deductions" value={0.00} />
+                    <View key={MakeID(8)}>
+                        <View>{
+                          //  console.log("tahe length : " + slipData.Deductions !== undefined ? slipData.Deductions.length : "wdad"),
+
+                            slipData.Deductions != null && slipData.Deductions.length > 0 ? slipData.Deductions.map((item, index) => {
+                                return (
+                                    <View style={{ backgroundColor: (index + 1) % 2 === 0 ? '#rgba(0,0,0, 0.05)' : '#rgba(0,0,0,0)' }} key={MakeID(8)}>
+                                        <NameAndValueStrip valueName={item.name} value={"AED " + item.amount} />
+                                    </View>);
+                            }) : <NameAndValueStrip valueName="No Deductions" value={0} />
+
+                        }
+                        </View>
+                    </View>
                 </InfoCard>
-                <NameAndNumberLargeStrip color='white' title="Net Amount" value="100.1023 AED" />
+                <NameAndNumberLargeStrip color='white' title="Net Amount" value={slipData.Total + " Dhs"} valueString={slipData.AmountInWords} />
 
             </ScrollView>
         }
@@ -340,7 +382,6 @@ export const Info_Screen = ({ navigation }) => {
                                 <LeaveOnToday data={InfoData.LeaveOnToday} />
                             }
                         </InfoCard>
-
 
                         <InfoCard heading={`Leave Eligibility`}>
                             {
@@ -786,13 +827,13 @@ export const Login_Screen = ({ navigation }) => {
                         } />
                         {
                             storeLib.registration === "true" ?
-                            <Button_Outline marginTop={10} label="Register" onPress={
-                                () => {
-                                    navigation.push(
-                                        "RegisterScreen");
-                                    //   navigation.reset({ index: 0, routes: [{ name: 'RegisterScreen' }] })
-                                }
-                            } /> : null
+                                <Button_Outline marginTop={10} label="Register" onPress={
+                                    () => {
+                                        navigation.push(
+                                            "RegisterScreen");
+                                        //   navigation.reset({ index: 0, routes: [{ name: 'RegisterScreen' }] })
+                                    }
+                                } /> : null
                         }
                         <VerticalSpacer height={30 * aspectRatio} />
                         <Text style={{ fontSize: 10, color: colorPallet.theme.default.subTextColor, textAlign: 'center' }}>
