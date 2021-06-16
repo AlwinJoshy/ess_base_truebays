@@ -1,12 +1,12 @@
 {
     "theme": {
         "default": {
-            "primaryColor": "#242045",
+            "primaryColor": "#32367d",
             "secondaryColor": "#FFFFFF",
-            "secondaryDarkColor": "#191633",
+            "secondaryDarkColor": "#232658",
             "secondaryAccentColor": "#072F45",
             "secondaryDefinitionColor": "#deded5",
-            "accentColor": "#6be893",
+            "accentColor": "#ebd550",
             "accentColor2": "#292b55",
             "neutral": "#072F45",
             "subTextColor": "#bbb",
