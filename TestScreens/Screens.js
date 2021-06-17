@@ -126,6 +126,8 @@ const ShortenText = (textString) => {
     else return "NA"
 }
 
+const dashboardScaleIOS = (Platform.OS === 'ios' ? 2 : 1);
+
 const BackButtonText = (navigation) => {
     return (
         <TextButton
@@ -145,27 +147,27 @@ export const Dashboard_Screen = ({ navigation }) => {
                     style: {
                         backgroundColor: colorPallet.theme.default.secondaryDarkColor,
                         padding: 10,
-                        height: 50,
+                        height: aspectRatio * 100 * dashboardScaleIOS,
                     },
                     inactiveTintColor: colorPallet.theme.default.accentColor,
                     activeTintColor: 'white',
-                    paddingBottom: 10,
+                    paddingBottom: aspectRatio * 10,
                     labelStyle: {
-                        fontSize: 8,
-                        marginBottom: 10
+                        fontSize: 18 * widthFactor,
+                        marginBottom: aspectRatio * 10 * dashboardScaleIOS
                     },
                 }
             }>
             <Tab.Screen options={{
                 tabBarIcon: ({ color, size }) => (
-                    <MaterialCommunityIcons name="information-outline" color={color} size={size * 1 * 0.8} />
+                    <MaterialCommunityIcons name="information-outline" color={color} size={size * heightFactor * 0.8} />
                 ),
             }}
                 name="Info" component={Info_Screen} />
             <Tab.Screen
                 options={{
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="menu" color={color} size={size * 1 * 0.8} />
+                        <MaterialCommunityIcons name="menu" color={color} size={size * heightFactor * 0.8} />
                     ),
                 }}
                 name="Request" component={Request_Screen} />
@@ -175,7 +177,7 @@ export const Dashboard_Screen = ({ navigation }) => {
                     <Tab.Screen
                         options={{
                             tabBarIcon: ({ color, size }) => (
-                                <MaterialCommunityIcons name="calendar-blank-outline" color={color} size={size * 1 * 0.8} />
+                                <MaterialCommunityIcons name="calendar-blank-outline" color={color} size={size * heightFactor * 0.8} />
                             ),
                         }}
                         name="Calendar" component={Calander_Screen} />
