@@ -145,14 +145,14 @@ export const Dashboard_Screen = ({ navigation }) => {
                     style: {
                         backgroundColor: colorPallet.theme.default.secondaryDarkColor,
                         padding: 10,
-                        height: '7%',
+                        height: aspectRatio * 100,
                     },
                     inactiveTintColor: colorPallet.theme.default.accentColor,
                     activeTintColor: 'white',
-                    paddingBottom: 10,
+                    paddingBottom: aspectRatio * 10,
                     labelStyle: {
                         fontSize: 18 * widthFactor,
-                        marginBottom: '3%'
+                        marginBottom: aspectRatio * 10
                     },
                 }
             }>
