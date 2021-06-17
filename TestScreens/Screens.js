@@ -145,27 +145,27 @@ export const Dashboard_Screen = ({ navigation }) => {
                     style: {
                         backgroundColor: colorPallet.theme.default.secondaryDarkColor,
                         padding: 10,
-                        height: aspectRatio * 100,
+                        height: 50,
                     },
                     inactiveTintColor: colorPallet.theme.default.accentColor,
                     activeTintColor: 'white',
-                    paddingBottom: aspectRatio * 10,
+                    paddingBottom: 10,
                     labelStyle: {
-                        fontSize: 18 * widthFactor,
-                        marginBottom: aspectRatio * 10
+                        fontSize: 8,
+                        marginBottom: 10
                     },
                 }
             }>
             <Tab.Screen options={{
                 tabBarIcon: ({ color, size }) => (
-                    <MaterialCommunityIcons name="information-outline" color={color} size={size * heightFactor * 0.8} />
+                    <MaterialCommunityIcons name="information-outline" color={color} size={size * 1 * 0.8} />
                 ),
             }}
                 name="Info" component={Info_Screen} />
             <Tab.Screen
                 options={{
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="menu" color={color} size={size * heightFactor * 0.8} />
+                        <MaterialCommunityIcons name="menu" color={color} size={size * 1 * 0.8} />
                     ),
                 }}
                 name="Request" component={Request_Screen} />
@@ -175,7 +175,7 @@ export const Dashboard_Screen = ({ navigation }) => {
                     <Tab.Screen
                         options={{
                             tabBarIcon: ({ color, size }) => (
-                                <MaterialCommunityIcons name="calendar-blank-outline" color={color} size={size * heightFactor * 0.8} />
+                                <MaterialCommunityIcons name="calendar-blank-outline" color={color} size={size * 1 * 0.8} />
                             ),
                         }}
                         name="Calendar" component={Calander_Screen} />
