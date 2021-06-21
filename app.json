@@ -18,7 +18,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "ess.test.appd"
+      "bundleIdentifier": "ess.florida.appd"
     },
     "android": {
       "versionCode": 3,
@@ -27,10 +27,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#edede8"
       },
-      "package": "ess.test.appd"
+      "package": "ess.florida.appd"
     },
     "web": {
-      "favicon": "./assets/favicon-modernvet.png"
+      "favicon": "./assets/favicon.png"
     }
   }
 }
