@@ -2,6 +2,6 @@
     "companyCode": "001",
     "baseUrl": "http://essmodernvet.truebays.com/",
     "shiftSection": "false",
-    "payslipSection": "true",
+    "payslipSection": "false",
     "registration": "false"
 }
