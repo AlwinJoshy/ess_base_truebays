@@ -52,6 +52,7 @@ export class NameAndNumberLargeStrip extends React.Component {
                     <Text style={[{ color: this.props.color }, NameAndNumberLargeStrip_Style.nameText]}>{this.props.title}</Text>
                     <View style={{ width: '100%', height: 2, backgroundColor: this.props.color }} ></View>
                     <Text style={[{ color: this.props.color }, NameAndNumberLargeStrip_Style.valueText]}>{this.props.value}</Text>
+                    <Text style={[{ color: this.props.color }, NameAndNumberLargeStrip_Style.valueStringText]}>{this.props.valueString}</Text>
                 </View>
             </View>
         )
@@ -90,8 +91,12 @@ const NameAndNumberLargeStrip_Style = StyleSheet.create({
         fontSize: 30 * aspectRatio
     },
     valueText: {
-        marginVertical: 10,
+        marginTop: 10,
         fontSize: 50 * aspectRatio,
+    },
+    valueStringText: {
+        marginVertical: 0,
+        fontSize: 30 * aspectRatio,
     }
 });
 
@@ -102,7 +107,7 @@ export class NameAndValueStrip extends React.Component {
 
     render() {
         return (
-            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingVertical:3}}>
                 <Text style={NameAndValueStrip_Style.nameText}>{this.props.valueName}</Text>
                 <Text style={NameAndValueStrip_Style.valueText}>{this.props.value}</Text>
             </View>
@@ -119,7 +124,6 @@ const NameAndValueStrip_Style = StyleSheet.create({
     },
     valueText: {
         fontSize: 25 * aspectRatio,
-        fontWeight: "700"
     }
 })
 
@@ -572,29 +576,6 @@ export class DropDownList extends React.Component {
                         name="caretdown"
                         size={15 * heightFactor}
                         color={colorPallet.theme.default.iconColor} />
-                    {
-                        /*
-                    <DropList
-                        selectedValue={this.state.value}
-                       // mode={'dialog'}
-                      //  style={DropDownList_Style.dropDown}
-                    //    dropdownIconColor={'white'}
-                        onValueChange={(itemValue, itemIndex) => {
-                            this.props.setValueFunction(itemValue, itemIndex);
-                            this.setState({
-                                value: itemValue
-                            });
-                        }
-                        }>
-                        {
-                            this.props.dropItems.map(item => {
-                                return (<DropList.Item label={item.Description} value={item.ID} />)
-                            })
-                        }
-                    </DropList>
-                    */
-
-                    }
                 </TouchableOpacity>
                 <Modal
                     animationType="slide"
@@ -613,10 +594,8 @@ export class DropDownList extends React.Component {
                             });
                         }} style={DropDownList_Style.modelInnerContainer}>
                             {
-                                this.props.dropItems.map((item, index) => {
+                                this.props.dropItems !== null ? this.props.dropItems.map((item, index) => {
                                     return (
-                                        //<DropList.Item label={item.Description} value={item.ID} />
-
                                         <Dropwown_Button
                                             key={`${item.Description}${item.ID}${index}`}
                                             label={item.Description}
@@ -636,6 +615,7 @@ export class DropDownList extends React.Component {
 
                                     )
                                 })
+                                : null
                             }
                         </TouchableOpacity>
                     </View>
