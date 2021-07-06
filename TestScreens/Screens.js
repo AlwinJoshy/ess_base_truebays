@@ -19,7 +19,7 @@ import {
     LeaveOnToday, RequestResponceNOtification,
     TextButton, NameAndValueStrip,
     NameAndNumberLargeStrip, aspectRatio,
-    Button_Outline
+    Button_Outline, TimeListEditor
 
 } from '../Components/ComponentLibrary.js'
 import { POSTAPIRequest, GETAPIRequest, DELETEAPIRequest, POSTAPIRequest_Combiner } from '../BackendAPI.js'
@@ -41,6 +41,7 @@ import { FlatList } from 'react-native-gesture-handler'
 import Spinner from 'react-native-loading-spinner-overlay';
 import { FontAwesome } from '@expo/vector-icons';
 import { interpolate, Value } from 'react-native-reanimated'
+import { useContext } from 'react/cjs/react.production.min'
 
 const Tab = createBottomTabNavigator();
 
@@ -212,7 +213,7 @@ export const PayslipSheet_Screen = ({ navigation }) => {
     const LoadSlip = (id) => {
         GETAPIRequest(`${storeLib.baseUrl}essapi/PaySlipApi/GetPayslipDetails`, ['PayrollID', id, 'EmployeeID', 'MVC01']).then(res => {
             setSlipDataObject(res);
-            console.log(res);
+           // console.log(res);
         }).catch(err => console.log(err));
     }
 
@@ -244,7 +245,7 @@ export const PayslipSheet_Screen = ({ navigation }) => {
                     <View style={{ width: '85%' }}>
                         <DropDownList
                             //  key={`${componentName.fieldName}${componentName.captionText}`}
-                        
+
                             selectedValue={monthSlipArray != undefined && monthSlipArray != null && monthSlipArray.length !== 0 ? monthSlipArray.length : 0}
                             // labelText={"componentName.captionText"}
                             dropItems={monthSlipArray}
@@ -262,7 +263,7 @@ export const PayslipSheet_Screen = ({ navigation }) => {
                 <InfoCard heading={`Earnings`}>
                     <View key={MakeID(8)}>
                         <View>{
-                         //   console.log("tahe length : " + slipData.Earnings !== undefined ? slipData.Earnings.length : "wdad"),
+                            //   console.log("tahe length : " + slipData.Earnings !== undefined ? slipData.Earnings.length : "wdad"),
 
                             slipData.Earnings != null ? slipData.Earnings.map((item, index) => {
                                 return (
@@ -278,7 +279,7 @@ export const PayslipSheet_Screen = ({ navigation }) => {
                 <InfoCard heading={`Deductions`}>
                     <View key={MakeID(8)}>
                         <View>{
-                          //  console.log("tahe length : " + slipData.Deductions !== undefined ? slipData.Deductions.length : "wdad"),
+                            //  console.log("tahe length : " + slipData.Deductions !== undefined ? slipData.Deductions.length : "wdad"),
 
                             slipData.Deductions != null && slipData.Deductions.length > 0 ? slipData.Deductions.map((item, index) => {
                                 return (
@@ -417,7 +418,7 @@ export const Request_Screen = ({ navigation }) => {
                     GetUserID()
                 ]).then(req => {
                     setbuttonOptionArray(req);
-                    // console.log(req);
+                    console.log(req);
                 }).catch(err => {
                     console.log(err);
                 });
@@ -528,7 +529,7 @@ export const Calander_Screen = ({ navigation }) => {
             'LoginID', "test",
             'Date', dateString
         ]).then(res => {
-            console.log(res);
+         //   console.log(res);
             settimingsArray(res.teamsTimings);
             setisAuthentication(false)
         }).catch(err => {
@@ -543,7 +544,7 @@ export const Calander_Screen = ({ navigation }) => {
             'companyCode', storeLib.companyCode,
             'LoginID', "test",
         ]).then(res => {
-            console.log(res);
+         //   console.log(res);
             setTeams(res.teams);
             setisAuthentication(false)
         }).catch(err => {
@@ -738,7 +739,7 @@ export const Login_Screen = ({ navigation }) => {
 
     useEffect(() => {
         GetAuthenticationDetails().then((res) => {
-            console.log(res);
+         //   console.log(res);
             if (res) {
                 GoToDashboard();
             }
@@ -751,7 +752,7 @@ export const Login_Screen = ({ navigation }) => {
         POSTAPIRequest("POST", `${storeLib.baseUrl}ESSApi/LoginAuthenticationApi/`, { userID: userID, Password: password })
             .then(
                 res => {
-                    console.log(res);
+                //    console.log(res);
                     res.UserFullName ?
                         (
                             UserDetails(res),
@@ -856,6 +857,140 @@ export const Login_Screen = ({ navigation }) => {
     );
 }
 
+export const TimeSheetAddEdit_Screen = ({ navigation, route }) => {
+
+    const [timeSelect, setTimeSelect] = useState(false)
+    const [timeSlotName, setTimeSlotName] = useState("")
+    const [startTimeState, setStartTime] = useState("")
+    const [endTimeState, setEndTime] = useState("")
+    const [descriptionState, setDescription] = useState(null)
+
+    useEffect(() => {
+        if (route.params.edit) {
+            setStartTime(route.params.arrayObject[route.params.objectIndex].startTime)
+            setEndTime(route.params.arrayObject[route.params.objectIndex].endTime)
+            setDescription(route.params.arrayObject[route.params.objectIndex].description)
+        } else {
+            setStartTime("00:00:00")
+            setEndTime("00:00:00")
+            setDescription("")
+        }
+    }, [])
+
+    return (
+        <ScreenContainer headervisible={false}>
+            <ScrollView style={styles.scrollContainer}>
+                <View style={styles.loginContainer}>
+                    <View style={styles.horizontalPaddedContainer}>
+                        <VerticalSpacer height={20 * heightFactor} />
+                        <InputFieldButton
+                            labelText={"Start Time"}
+                            value={startTimeState}
+                            onPress={() => {
+                                setTimeSelect(true);
+                                setTimeSlotName("start");
+                                //    setSelectedTime(newDynamicObject);
+
+                            }}
+                        />
+                        <InputFieldButton
+                            labelText={"End Time"}
+                            value={endTimeState}
+                            onPress={() => {
+                                setTimeSelect(true);
+                                setTimeSlotName("end");
+                                // setSelectedTime(newDynamicObject);
+                            }}
+                        />
+                        {
+                            descriptionState !== null ?
+                                <InputField
+                                    defaultValue={descriptionState}
+                                    updateValue={(value) => {
+                                        setDescription(value);
+                                        if (route.params.edit) route.params.arrayObject[route.params.objectIndex].description = value;
+                                    }}
+                                    data={"newDynamicObject"}
+                                    value={null}
+                                    multiline={true} numberOfLines={4}
+                                    labelText={"Description"} /> : null
+                        }
+
+                        <Button_Fill label="Done" onPress={
+                            () => {
+                                if(!route.params.edit){
+                                route.params.arrayObject.push(
+                                    {
+                                        startTime: startTimeState,
+                                        endTime: endTimeState,
+                                        description: descriptionState
+                                    }
+                                );
+                                console.log(route.params.arrayObject);
+                            } 
+
+                            navigation.pop()
+
+                                //    CheckAuthentication(userName, password);
+                                //    setisAuthentication(true);
+
+                            }
+                        } />
+                    </View>
+                </View>
+
+                <View>{
+                    timeSelect ?
+                        <DateTimePicker
+                            testID="dateTimePicker"
+                            value={new Date()}
+                            mode={"time"}
+                            is24Hour={true}
+                            display="default"
+                            onChange={(evet, time = null) => {
+                                setTimeSelect(false);
+                                if (evet.type === 'set') {
+                                    let hourText = time.getHours();
+                                    let minuteText = time.getMinutes();
+                                    let combinedTime = `${hourText}:${minuteText}:00`;
+
+                                    //setselectedTime(timeOut => timeOut.paramValue = combinedTime);
+
+                                    switch (timeSlotName) {
+                                        case "start":
+                                            if (route.params.edit) route.params.arrayObject[route.params.objectIndex].startTime = combinedTime;
+                                            setStartTime(combinedTime);
+                                            break;
+
+                                        case "end":
+                                            if (route.params.edit) route.params.arrayObject[route.params.objectIndex].endTime = combinedTime;
+                                            setEndTime(combinedTime);
+                                            break;
+
+                                        default:
+                                            break;
+                                    }
+                                    //settimeSheetValue(route.params.arrayObject[route.params.objectIndex]);
+                                    console.log(route.params.arrayObject);
+                                    // this.forc
+                                }
+                            }}
+                        /> : null
+
+
+                }</View>
+
+            </ScrollView>
+            {
+                // route.params.edit
+
+
+            }
+        </ScreenContainer>
+    )
+
+}
+
 export const DataListDisplay_Screen = ({ navigation, route }) => {
 
     const [displaySpinner, setDisplaySpinner] = useState(false)
@@ -890,6 +1025,7 @@ export const DataListDisplay_Screen = ({ navigation, route }) => {
             'type', route.params.targetTypeID
         ])
             .then(res => {
+            //    console.log(res);
                 setRecordArray(res.Data);
                 setApplicationStatus(res.StatusList);
                 setrerender(false);
@@ -927,8 +1063,8 @@ export const DataListDisplay_Screen = ({ navigation, route }) => {
 
         switch (pageData.listFieldType) {
             case "DateAddressRemarkStrip":
-
                 return (
+
                     <DateAddressRemarkStrip
                         label={
                             ShortenText(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.titleKey))
@@ -1035,9 +1171,17 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
     const [selectedDate, setselectedDate] = useState(null)
     const [selectedTime, setselectedTime] = useState(null)
 
+    const [test, setTest] = useState()
+
     const holderArray = [];
 
     useEffect(() => {
+
+        const unsubscribe = navigation.addListener('focus', () => {
+            setTest(Math.random())
+
+        });
+
 
         let indexRecord = 0;
         route.params?.pageFormat.subPage[0].dynamicElements.map((item, index) => {
@@ -1060,16 +1204,17 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
 
 
         return (() => {
+            unsubscribe;
+            setTest(Math.random());
             setdynamicDataHolder([]);
             console.log("Clean - up");
+            setTest();
         });
     }, []);
 
 
     const onButtonClick = () => {
-
         SendDataToServer();
-
     };
 
 
@@ -1094,6 +1239,8 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
         POSTAPIRequest(submitFormat, `${storeLib.baseUrl}${route.params.pageFormat.saveUrl}`, neoSendDataFormat)
             .then(res => console.log(res))
             .catch(err => console.log(err));
+
+        console.log(`${storeLib.baseUrl}${route.params.pageFormat.saveUrl}`);
 
         navigation.pop();
     }
@@ -1146,7 +1293,7 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
                 }
                 break;
 
-            case "TimeBox":
+            case "Time":
                 newDynamicObject.renderObject = () => {
                     return (
                         <InputFieldButton
@@ -1158,6 +1305,40 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
                                 setselectedTime(newDynamicObject);
                             }
                             } />
+                    )
+                }
+                break;
+
+            case "TimeSheet":
+                newDynamicObject.renderObject = () => {
+                    return (
+              
+                        <TimeListEditor
+                            key={`${componentName.fieldName}${componentName.captionText}`}
+                            value={newDynamicObject.paramValue}
+                            labelText={componentName.captionText}
+                            onPress={() => {
+                                settimeEdit(true);
+                                setselectedTime(newDynamicObject);
+                            }}
+                            onAddPress={(arrayObject) => {
+                                navigation.push('TimeSheetScreen',
+                                    {
+                                        edit: false,
+                                        arrayObject: arrayObject,
+                                        objectIndex: 0
+                                    })
+                            }}
+                            onEditPress={(objectIndex, arrayObject) => {
+                                navigation.push('TimeSheetScreen',
+                                    {
+                                        edit: true,
+                                        arrayObject: arrayObject,
+                                        objectIndex: objectIndex
+                                    })
+                            }
+                            }
+                        /> 
                     )
                 }
                 break;
@@ -1213,7 +1394,7 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
                 newDynamicObject.renderObject = () => {
                     return (
                         <Button_Fill
-                            key={`${componentName.fieldName}${componentName.captionText}`}
+                            key={`${componentName.fieldName}${componentName.captionText}${test}`}
                             label={componentName.captionText}
                             onPress={
                                 () => {

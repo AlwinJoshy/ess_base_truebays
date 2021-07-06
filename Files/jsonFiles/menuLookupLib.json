@@ -399,6 +399,13 @@
                 "dateKey": "fromDate",
                 "subNoteKey": "toDate"
             }
+        },
+        "DWL": {
+            "recordDataKeys": {
+                "titleKey": "date",
+                "dateKey": "date",
+                "subNoteKey": "totalHours"
+            }
         }
     }
 }

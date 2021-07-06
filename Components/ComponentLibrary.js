@@ -107,7 +107,7 @@ export class NameAndValueStrip extends React.Component {
 
     render() {
         return (
-            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingVertical:3}}>
+            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 3 }}>
                 <Text style={NameAndValueStrip_Style.nameText}>{this.props.valueName}</Text>
                 <Text style={NameAndValueStrip_Style.valueText}>{this.props.value}</Text>
             </View>
@@ -163,7 +163,7 @@ export class RequestResponceNOtification extends React.Component {
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={{ fontSize: 23 * aspectRatio }}>
                                             Description :
-                                    </Text>
+                                        </Text>
                                         <Text style={{ fontSize: 23 * aspectRatio }}>{
                                             ` ${item.Description}`
                                         }
@@ -173,7 +173,7 @@ export class RequestResponceNOtification extends React.Component {
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={{ fontSize: 23 * aspectRatio }}>
                                             Status :
-                                    </Text>
+                                        </Text>
                                         <Text style={{ fontSize: 23 * aspectRatio, fontWeight: "700", color: colorPallet.theme.default.accentColor2 }}>{
                                             ` ${item.Remarks}`
                                         }
@@ -183,7 +183,7 @@ export class RequestResponceNOtification extends React.Component {
                                     <View style={{ flexDirection: 'row' }}>
                                         <Text style={{ fontSize: 23 * aspectRatio }}>
                                             ReqID# :
-                                    </Text>
+                                        </Text>
                                         <Text style={{ fontSize: 23 * aspectRatio }}>{
                                             ` ${item.ID}`
                                         }
@@ -615,7 +615,7 @@ export class DropDownList extends React.Component {
 
                                     )
                                 })
-                                : null
+                                    : null
                             }
                         </TouchableOpacity>
                     </View>
@@ -1543,6 +1543,87 @@ export class InputFieldButton extends React.Component {
                     <TextInput editable={false} value={this.props.value} onChangeText={(value) => this.props.onChangeText ? this.props.onChangeText(value) : null} onEndEditing={() => this.props.onEndEditing ? this.props.onEndEditing() : null} numberOfLines={this.props.numberOfLines} multiline={this.props.multiline} style={this.props.multiline ? InputField_Style.textInputArea : InputField_Style.textInput}></TextInput>
                 </View>
             </TouchableOpacity>
+        );
+    }
+}
+
+export class TimeSheetStrip extends React.Component {
+    constructor() {
+        super();
+    }
+
+    render() {
+        return (
+            <View style={{ paddingHorizontal: 5, width: '100%', marginVertical: 5 }}>
+                <View style={{ width: '100%', flexDirection: 'row', paddingVertical: 5, justifyContent: 'space-between', alignItems: 'center' }}>
+                    <View>
+                        <Text style={TimeSheetStrip_Style.normalText}>{`Start Time: ${this.props.arrayObject[this.props.objectIndex].startTime}`}</Text>
+                        <Text style={TimeSheetStrip_Style.normalText}>{`End Time: ${this.props.arrayObject[this.props.objectIndex].endTime}`}</Text>
+                    </View>
+                    <View style={TimeSheetStrip_Style.oprationIcon}>
+                        <TouchableOpacity style={TimeSheetStrip_Style.iconButton} onPress={() =>
+                            this.props.onEditPress(this.props.objectIndex, this.props.arrayObject)}>
+                            <Icon1 name={"edit"} size={25} color={"#999"} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={TimeSheetStrip_Style.iconButton}onPress={() => this.props.onDeletePress()}>
+                            <Icon2 name={"trash"} size={25} color={"#999"} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        )
+    }
+}
+
+const TimeSheetStrip_Style = StyleSheet.create({
+    normalText: {
+        fontSize: colorPallet.theme.default.buttonTextSize * aspectRatio * 0.8,
+    },
+    oprationIcon: {
+        flexDirection: 'row'
+    },
+    iconButton: {
+        marginLeft: 10
+    }
+});
+
+export class TimeListEditor extends React.Component {
+    constructor() {
+        super();
+        this.state = {};
+    }
+    render() {
+        console.log();
+        return (
+            <View style={InputField_Style.componentStyle}>
+                <View style={InputField_Style.innerContainer}>
+                    <Text style={InputField_Style.labelText}>{this.props.labelText}</Text>
+                    <View style={{ width: '100%', backgroundColor: 'white' }}>
+                        <View style={{ paddingHorizontal: 5, alignItems: 'center', width: '100%', height: 30, flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Text>Add Time</Text>
+                            <TouchableOpacity style={{ paddingHorizontal: 5 }}
+                                onPress={() => this.props.onAddPress(this.props.value)}>
+                                <Text style={{fontSize:30}}>+</Text>
+                            </TouchableOpacity>
+                        </View>
+                        {
+                            this.props.value != null && this.props.value.length > 0 ?
+                            this.props.value.map((item, index) => {
+                                return (
+                                    <TimeSheetStrip
+                                        arrayObject={this.props.value}
+                                        objectIndex={index}
+                                        onEditPress={this.props.onEditPress}
+                                        onDeletePress={() => console.log("Edit...")}
+                                    />
+                                )
+                            })
+                        : null
+
+                        }
+                    </View>
+                </View>
+            </View>
         );
     }
 }
