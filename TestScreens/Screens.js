@@ -213,7 +213,7 @@ export const PayslipSheet_Screen = ({ navigation }) => {
     const LoadSlip = (id) => {
         GETAPIRequest(`${storeLib.baseUrl}essapi/PaySlipApi/GetPayslipDetails`, ['PayrollID', id, 'EmployeeID', 'MVC01']).then(res => {
             setSlipDataObject(res);
-           // console.log(res);
+            // console.log(res);
         }).catch(err => console.log(err));
     }
 
@@ -529,7 +529,7 @@ export const Calander_Screen = ({ navigation }) => {
             'LoginID', "test",
             'Date', dateString
         ]).then(res => {
-         //   console.log(res);
+            //   console.log(res);
             settimingsArray(res.teamsTimings);
             setisAuthentication(false)
         }).catch(err => {
@@ -544,7 +544,7 @@ export const Calander_Screen = ({ navigation }) => {
             'companyCode', storeLib.companyCode,
             'LoginID', "test",
         ]).then(res => {
-         //   console.log(res);
+            //   console.log(res);
             setTeams(res.teams);
             setisAuthentication(false)
         }).catch(err => {
@@ -739,7 +739,7 @@ export const Login_Screen = ({ navigation }) => {
 
     useEffect(() => {
         GetAuthenticationDetails().then((res) => {
-         //   console.log(res);
+            //   console.log(res);
             if (res) {
                 GoToDashboard();
             }
@@ -752,7 +752,7 @@ export const Login_Screen = ({ navigation }) => {
         POSTAPIRequest("POST", `${storeLib.baseUrl}ESSApi/LoginAuthenticationApi/`, { userID: userID, Password: password })
             .then(
                 res => {
-                //    console.log(res);
+                    //    console.log(res);
                     res.UserFullName ?
                         (
                             UserDetails(res),
@@ -918,18 +918,25 @@ export const TimeSheetAddEdit_Screen = ({ navigation, route }) => {
 
                         <Button_Fill label="Done" onPress={
                             () => {
-                                if(!route.params.edit){
-                                route.params.arrayObject.push(
-                                    {
-                                        startTime: startTimeState,
-                                        endTime: endTimeState,
-                                        description: descriptionState
-                                    }
-                                );
-                                console.log(route.params.arrayObject);
-                            } 
+                                if (!route.params.edit) {
+                                    route.params.arrayObject != null ?
+                                        route.params.arrayObject.push(
+                                            {
+                                                startTime: startTimeState,
+                                                endTime: endTimeState,
+                                                description: descriptionState
+                                            }
+                                        ) : route.params.arrayObject = [
+                                            {
+                                                startTime: startTimeState,
+                                                endTime: endTimeState,
+                                                description: descriptionState
+                                            }
+                                        ];
+                                    console.log(route.params.arrayObject);
+                                }
 
-                            navigation.pop()
+                                navigation.pop()
 
                                 //    CheckAuthentication(userName, password);
                                 //    setisAuthentication(true);
@@ -1025,7 +1032,7 @@ export const DataListDisplay_Screen = ({ navigation, route }) => {
             'type', route.params.targetTypeID
         ])
             .then(res => {
-            //    console.log(res);
+                //    console.log(res);
                 setRecordArray(res.Data);
                 setApplicationStatus(res.StatusList);
                 setrerender(false);
@@ -1171,6 +1178,9 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
     const [selectedDate, setselectedDate] = useState(null)
     const [selectedTime, setselectedTime] = useState(null)
 
+    const [deletePopup, setdeletePopup] = useState(false)
+    const [selectedTimeSlotData, setSelectedTimeSlotData] = useState(null)
+
     const [test, setTest] = useState()
 
     const holderArray = [];
@@ -1217,6 +1227,12 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
         SendDataToServer();
     };
 
+    const DeleteItemFromList = (data) => {
+        console.log(data);
+        if(data.index == 0)data.arrayData.shift();
+        else data.arrayData.splice(data.index);
+        
+    }
 
     const SendDataToServer = () => {
 
@@ -1268,13 +1284,31 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
         newDynamicObject.index = index;
         newDynamicObject.parameterKeyName = componentName.objectParameterKey;
         let defaultValue = null;
+
+
         if (route.params.edit) {
+
             defaultValue = GetValueOfKey(route.params.data.item, newDynamicObject.parameterKeyName);
             defaultValue = componentName.fieldName == "DateBox" ? GetDateWithSpacer(new Date(defaultValue), " ", true) : defaultValue
             console.log(defaultValue);
             newDynamicObject.recordState(defaultValue);
-        }
 
+        }
+        else {
+            /*
+            console.log("On ADD...");
+            componentName.fieldName !== "TimeSheet" ?
+
+                defaultValue = [
+                    {
+                        startTime: '00:00:00',
+                        endDate: '00:00:00',
+                        description: 'test'
+                    }]
+
+                : null;
+                    */
+        }
 
         switch (componentName.fieldName) {
             case "DateBox":
@@ -1311,8 +1345,14 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
 
             case "TimeSheet":
                 newDynamicObject.renderObject = () => {
+
+                    console.log("On Edit...");
+                    if (!route.params.edit && newDynamicObject.paramValue == null) {
+                        newDynamicObject.recordState([])
+                    };
+
                     return (
-              
+
                         <TimeListEditor
                             key={`${componentName.fieldName}${componentName.captionText}`}
                             value={newDynamicObject.paramValue}
@@ -1337,8 +1377,14 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
                                         objectIndex: objectIndex
                                     })
                             }
+
                             }
-                        /> 
+                            onDeletePress={(objectIndex, arrayObject) => {
+                                setdeletePopup(!deletePopup);
+                                setSelectedTimeSlotData({ index: objectIndex, arrayData: arrayObject })
+                            }
+                            }
+                        />
                     )
                 }
                 break;
@@ -1480,6 +1526,18 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
 
                 }</View>
             </ScrollView>
+            <DialoguePopup
+                onPressCancel={() =>
+                    setdeletePopup(!deletePopup)
+                }
+                onPressOk={() => {
+                    DeleteItemFromList(selectedTimeSlotData)
+                    setdeletePopup(!deletePopup)
+                }}
+
+                getOut={() =>
+                    setdeletePopup(!deletePopup)}
+                visible={deletePopup} />
         </ScreenContainer>
     );
 }

@@ -1565,7 +1565,8 @@ export class TimeSheetStrip extends React.Component {
                             this.props.onEditPress(this.props.objectIndex, this.props.arrayObject)}>
                             <Icon1 name={"edit"} size={25} color={"#999"} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={TimeSheetStrip_Style.iconButton}onPress={() => this.props.onDeletePress()}>
+                        <TouchableOpacity style={TimeSheetStrip_Style.iconButton} onPress={() =>
+                            this.props.onDeletePress(this.props.objectIndex, this.props.arrayObject)}>
                             <Icon2 name={"trash"} size={25} color={"#999"} />
                         </TouchableOpacity>
                     </View>
@@ -1595,30 +1596,31 @@ export class TimeListEditor extends React.Component {
     render() {
         console.log();
         return (
-            <View style={InputField_Style.componentStyle}>
-                <View style={InputField_Style.innerContainer}>
-                    <Text style={InputField_Style.labelText}>{this.props.labelText}</Text>
-                    <View style={{ width: '100%', backgroundColor: 'white' }}>
+            <View style={TimeListEditor_Style.componentStyle}>
+                <View style={TimeListEditor_Style.innerContainer}>
+                    <Text style={TimeListEditor_Style.labelText}>{this.props.labelText}</Text>
+
+                    <View style={TimeListEditor_Style.containerBox}>
                         <View style={{ paddingHorizontal: 5, alignItems: 'center', width: '100%', height: 30, flexDirection: 'row', justifyContent: 'space-between' }}>
                             <Text>Add Time</Text>
                             <TouchableOpacity style={{ paddingHorizontal: 5 }}
                                 onPress={() => this.props.onAddPress(this.props.value)}>
-                                <Text style={{fontSize:30}}>+</Text>
+                                <Text style={{ fontSize: 30 }}>+</Text>
                             </TouchableOpacity>
                         </View>
                         {
                             this.props.value != null && this.props.value.length > 0 ?
-                            this.props.value.map((item, index) => {
-                                return (
-                                    <TimeSheetStrip
-                                        arrayObject={this.props.value}
-                                        objectIndex={index}
-                                        onEditPress={this.props.onEditPress}
-                                        onDeletePress={() => console.log("Edit...")}
-                                    />
-                                )
-                            })
-                        : null
+                                this.props.value.map((item, index) => {
+                                    return (
+                                        <TimeSheetStrip
+                                            arrayObject={this.props.value}
+                                            objectIndex={index}
+                                            onEditPress={this.props.onEditPress}
+                                            onDeletePress={this.props.onDeletePress}
+                                        />
+                                    )
+                                })
+                                : null
 
                         }
                     </View>
@@ -1627,6 +1629,33 @@ export class TimeListEditor extends React.Component {
         );
     }
 }
+
+const TimeListEditor_Style = StyleSheet.create({
+    componentStyle: {
+        marginVertical: 5,
+    },
+    innerContainer: {
+        marginVertical: 5,
+    },
+
+    containerBox: {
+        width: '100%',
+        paddingHorizontal: 5,
+        borderRadius: 5,
+        borderColor: colorPallet.theme.default.neutral,
+        borderWidth: 0.5,
+        color: 'black',
+        backgroundColor: colorPallet.theme.default.secondaryDefinitionColor
+    },
+
+    labelText: {
+        fontSize: colorPallet.theme.default.labelTextSize * aspectRatio,
+        color: colorPallet.theme.default.labelTextColor,
+        marginBottom: 5,
+        fontWeight: "700"
+    },
+
+})
 
 export class InputField extends React.Component {
     constructor() {
