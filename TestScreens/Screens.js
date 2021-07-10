@@ -924,13 +924,17 @@ export const TimeSheetAddEdit_Screen = ({ navigation, route }) => {
                                             {
                                                 startTime: startTimeState,
                                                 endTime: endTimeState,
-                                                description: descriptionState
+                                                description: descriptionState,
+                                                id: -1,
+                                                slno: route.params.arrayObject.length + 1
                                             }
                                         ) : route.params.arrayObject = [
                                             {
                                                 startTime: startTimeState,
                                                 endTime: endTimeState,
-                                                description: descriptionState
+                                                description: descriptionState,
+                                                id: -1,
+                                                slno: 1
                                             }
                                         ];
                                     console.log(route.params.arrayObject);
