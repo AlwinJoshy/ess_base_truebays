@@ -877,6 +877,27 @@ export const TimeSheetAddEdit_Screen = ({ navigation, route }) => {
         }
     }, [])
 
+    const getTimeDiff = (startTime, endTime) => {
+
+        let [sh, sm] = startTime.split(":");
+        let [eh, em] = endTime.split(":");
+
+        let startDate = new Date();
+        startDate.setHours(sh);
+        startDate.setMinutes(sm);
+
+        let endDate = new Date();
+        endDate.setHours(eh);
+        endDate.setMinutes(em);
+        let diffSec = (endDate.getTime() - startDate.getTime()) / 1000;
+        let diffMin = diffSec / 60;
+        let diffHrs = diffMin / 60;
+        let hrs = parseInt(diffHrs);
+        let mins = (diffHrs - hrs) * 60;
+        console.log(`${hrs}:${parseInt(mins)}:00`);
+        return "00:00:00"
+    }
+
     return (
         <ScreenContainer headervisible={false}>
             <ScrollView style={styles.scrollContainer}>
@@ -926,7 +947,8 @@ export const TimeSheetAddEdit_Screen = ({ navigation, route }) => {
                                                 endTime: endTimeState,
                                                 description: descriptionState,
                                                 id: -1,
-                                                slno: route.params.arrayObject.length + 1
+                                                slno: route.params.arrayObject.length + 1,
+                                                taskHours: getTimeDiff(startTimeState, endTimeState)
                                             }
                                         ) : route.params.arrayObject = [
                                             {
@@ -934,10 +956,14 @@ export const TimeSheetAddEdit_Screen = ({ navigation, route }) => {
                                                 endTime: endTimeState,
                                                 description: descriptionState,
                                                 id: -1,
-                                                slno: 1
+                                                slno: 1,
+                                                taskHours: getTimeDiff(startTimeState, endTimeState)
                                             }
                                         ];
                                     console.log(route.params.arrayObject);
+                                }
+                                else {
+                                    route.params.arrayObject[route.params.objectIndex].taskHours = getTimeDiff(startTimeState, endTimeState)
                                 }
 
                                 navigation.pop()
@@ -1233,9 +1259,9 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
 
     const DeleteItemFromList = (data) => {
         console.log(data);
-        if(data.index == 0)data.arrayData.shift();
+        if (data.index == 0) data.arrayData.shift();
         else data.arrayData.splice(data.index);
-        
+
     }
 
     const SendDataToServer = () => {
