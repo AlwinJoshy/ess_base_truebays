@@ -3,5 +3,5 @@
     "baseUrl": "http://essfloridahc.truebays.com/",
     "shiftSection": "false",
     "payslipSection": "true",
-    "registration": "false"
+    "registration": "true"
 }
