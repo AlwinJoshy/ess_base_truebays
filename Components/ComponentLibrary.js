@@ -1139,6 +1139,76 @@ const DateAddressRemarkStrip_Style = StyleSheet.create({
     }
 })
 
+export class WorkLogStrip extends React.Component {
+    constructor() {
+        super();
+        this.state = {};
+    }
+
+    render() {
+        return (
+            <View style={WorkLogStrip_Style.componentStyle} activeOpacity={0.5}>
+                <View style={WorkLogStrip_Style.innerContainer}>
+                    <View style={WorkLogStrip_Style.contentSection}>
+                        <Text style={WorkLogStrip_Style.labelText}>{this.props.label}</Text>
+                        <View style={WorkLogStrip_Style.dateTextContainer}>
+                            <Text style={WorkLogStrip_Style.dateText}>{this.props.subNote}</Text>
+                            <Text style={WorkLogStrip_Style.dateText}>{`${this.props.date}`}</Text>
+                        </View>
+                    </View>
+
+                    <View style={WorkLogStrip_Style.editSection}>
+                        <TouchableOpacity onPress={() => this.props.onEditPress()}>
+                            <Icon1 name={"edit"} size={25} color={"#999"} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => this.props.onDeletePress()}>
+                            <Icon2 name={"trash"} size={25} color={"#999"} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        );
+    }
+}
+
+const WorkLogStrip_Style = StyleSheet.create({
+    componentStyle: {
+        width: '100%',
+        height: 100,
+        backgroundColor: colorPallet.theme.default.secondaryColor,
+        marginVertical: 5,
+        borderRadius: 10
+    },
+    innerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: '100%',
+        paddingHorizontal: '5%'
+    },
+    contentSection: {
+
+    },
+    editSection: {
+        justifyContent: 'space-between',
+        height: '70%'
+    },
+    dateTextContainer: {
+
+    },
+    labelText: {
+        fontSize: 28 * aspectRatio
+    },
+    dateText: {
+        color: 'gray',
+        fontSize: 20 * aspectRatio
+    },
+    statusText: {
+        fontSize: 20 * aspectRatio,
+        fontWeight: "700"
+    }
+})
+
 
 export class RemarkDateAddressingStrip extends React.Component {
     constructor() {

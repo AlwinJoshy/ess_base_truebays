@@ -637,6 +637,7 @@ export const Register_Screen = ({ navigation }) => {
     const [errorFound, seterrorFound] = useState(false)
     const [errorMessage, seterrorMessage] = useState("")
     const [messageColor, setmessageColor] = useState(1)
+    const [companyID, setCompanyID] = useState(-1)
 
     useEffect(() => {
         /*
@@ -697,7 +698,27 @@ export const Register_Screen = ({ navigation }) => {
                         <VerticalSpacer height={200 * aspectRatio} />
                         <InputField labelText={"Username"} onChangeText={(value) => setUserName(value)} />
                         <InputField labelText={"E-mail"} onChangeText={(value) => setUserEmail(value)} />
-                        <InputField labelText={"Password"} onChangeText={(value) => setPassword(value)} secureText={true} />
+                        <InputField labelText={"Contact Number"} onChangeText={(value) => setUserEmail(value)} />
+                        <DropDownList
+                                    //key={`${componentName.fieldName}${componentName.captionText}`}
+                                    selectedValue={1}
+                                    labelText={"Project ID"}
+                                    dropItems={[
+                                        {
+                                            Description:"Modern Veterinary Clinic",
+                                            ID: 1
+                                        },
+                                        {
+                                            Description:"MVC",
+                                            ID: 2
+                                        }
+                                    ]}
+                                    setValueFunction={(itemValue, itemIndex) => {
+                                        setCompanyID(itemIndex);
+                                        //    newDynamicObject.recordState(itemValue);
+                                        //   console.log(itemValue + JSON.stringify(newDynamicObject));
+                                    }}
+                                />
                         <ErrorMessage visible={errorFound} msgType={messageColor} messageText={errorMessage} />
                         <Button_Fill label="Submit" onPress={
                             () => {
@@ -864,18 +885,53 @@ export const TimeSheetAddEdit_Screen = ({ navigation, route }) => {
     const [startTimeState, setStartTime] = useState("")
     const [endTimeState, setEndTime] = useState("")
     const [descriptionState, setDescription] = useState(null)
+    const [projIDState, setProjID] = useState(null)
+    const [taskCategoryIDState, setTaskCategoryID] = useState(null)
+
+    const [dropListState, setDropListState] = useState(null)
+    const [screenDisplayState, setScreenDisplayState] = useState(false)
 
     useEffect(() => {
         if (route.params.edit) {
             setStartTime(route.params.arrayObject[route.params.objectIndex].startTime)
             setEndTime(route.params.arrayObject[route.params.objectIndex].endTime)
             setDescription(route.params.arrayObject[route.params.objectIndex].description)
+            setProjID(route.params.arrayObject[route.params.objectIndex].projID)
+            setTaskCategoryID(route.params.arrayObject[route.params.objectIndex].taskCategoryID)
         } else {
             setStartTime("00:00:00")
             setEndTime("00:00:00")
             setDescription("")
+            setProjID("Select")
+            setTaskCategoryID("Select")
         }
+        GetDropDownData();
+
     }, [])
+
+    //essfloridahc.truebays.com/?companyCode=001
+
+    const FindObjectWithID = (id, arrayList) => {
+        for (let index = 0; index < arrayList.length; index++) {
+            if (arrayList[index].ID == id) {
+                return arrayList[index];
+            }
+        }
+        return { ID: -1, Description: "Select Item" }
+    }
+
+    const GetDropDownData = () => {
+        GETAPIRequest(`${storeLib.baseUrl}essapi/ListDataApi/DropdownList`, [
+            'companyCode', storeLib.companyCode
+        ]).then(res => {
+            setDropListState(res);
+            setScreenDisplayState(true);
+            console.log(res);
+        }).catch(err => {
+            console.log(err);
+
+        });
+    }
 
     const getTimeDiff = (startTime, endTime) => {
 
@@ -899,129 +955,161 @@ export const TimeSheetAddEdit_Screen = ({ navigation, route }) => {
     }
 
     return (
+
         <ScreenContainer headervisible={false}>
-            <ScrollView style={styles.scrollContainer}>
-                <View style={styles.loginContainer}>
-                    <View style={styles.horizontalPaddedContainer}>
-                        <VerticalSpacer height={20 * heightFactor} />
-                        <InputFieldButton
-                            labelText={"Start Time"}
-                            value={startTimeState}
-                            onPress={() => {
-                                setTimeSelect(true);
-                                setTimeSlotName("start");
-                                //    setSelectedTime(newDynamicObject);
-
-                            }}
-                        />
-                        <InputFieldButton
-                            labelText={"End Time"}
-                            value={endTimeState}
-                            onPress={() => {
-                                setTimeSelect(true);
-                                setTimeSlotName("end");
-                                // setSelectedTime(newDynamicObject);
-                            }}
-                        />
-                        {
-                            descriptionState !== null ?
-                                <InputField
-                                    defaultValue={descriptionState}
-                                    updateValue={(value) => {
-                                        setDescription(value);
-                                        if (route.params.edit) route.params.arrayObject[route.params.objectIndex].description = value;
-                                    }}
-                                    data={"newDynamicObject"}
-                                    value={null}
-                                    multiline={true} numberOfLines={4}
-                                    labelText={"Description"} /> : null
-                        }
-
-                        <Button_Fill label="Done" onPress={
-                            () => {
-                                if (!route.params.edit) {
-                                    route.params.arrayObject != null ?
-                                        route.params.arrayObject.push(
-                                            {
-                                                startTime: startTimeState,
-                                                endTime: endTimeState,
-                                                description: descriptionState,
-                                                id: -1,
-                                                slno: route.params.arrayObject.length + 1,
-                                                taskHours: getTimeDiff(startTimeState, endTimeState)
-                                            }
-                                        ) : route.params.arrayObject = [
-                                            {
-                                                startTime: startTimeState,
-                                                endTime: endTimeState,
-                                                description: descriptionState,
-                                                id: -1,
-                                                slno: 1,
-                                                taskHours: getTimeDiff(startTimeState, endTimeState)
-                                            }
-                                        ];
-                                    console.log(route.params.arrayObject);
-                                }
-                                else {
-                                    route.params.arrayObject[route.params.objectIndex].taskHours = getTimeDiff(startTimeState, endTimeState)
-                                }
-
-                                navigation.pop()
-
-                                //    CheckAuthentication(userName, password);
-                                //    setisAuthentication(true);
-
-                            }
-                        } />
-                    </View>
-                </View>
-
-                <View>{
-                    timeSelect ?
-                        <DateTimePicker
-                            testID="dateTimePicker"
-                            value={new Date()}
-                            mode={"time"}
-                            is24Hour={true}
-                            display="default"
-                            onChange={(evet, time = null) => {
-                                setTimeSelect(false);
-                                if (evet.type === 'set') {
-                                    let hourText = time.getHours();
-                                    let minuteText = time.getMinutes();
-                                    let combinedTime = `${hourText}:${minuteText}:00`;
-
-                                    //setselectedTime(timeOut => timeOut.paramValue = combinedTime);
-
-                                    switch (timeSlotName) {
-                                        case "start":
-                                            if (route.params.edit) route.params.arrayObject[route.params.objectIndex].startTime = combinedTime;
-                                            setStartTime(combinedTime);
-                                            break;
-
-                                        case "end":
-                                            if (route.params.edit) route.params.arrayObject[route.params.objectIndex].endTime = combinedTime;
-                                            setEndTime(combinedTime);
-                                            break;
-
-                                        default:
-                                            break;
-                                    }
-                                    //settimeSheetValue(route.params.arrayObject[route.params.objectIndex]);
-                                    console.log(route.params.arrayObject);
-                                    // this.forc
-                                }
-                            }}
-                        /> : null
-
-
-                }</View>
-
-            </ScrollView>
             {
-                // route.params.edit
+                screenDisplayState ?
+                    <ScrollView style={styles.scrollContainer}>
+
+                        <View style={styles.loginContainer}>
+                            <View style={styles.horizontalPaddedContainer}>
+                                <VerticalSpacer height={20 * heightFactor} />
+                                <InputFieldButton
+                                    labelText={"Start Time"}
+                                    value={startTimeState}
+                                    onPress={() => {
+                                        setTimeSelect(true);
+                                        setTimeSlotName("start");
+                                        //    setSelectedTime(newDynamicObject);
+
+                                    }}
+                                />
+                                <InputFieldButton
+                                    labelText={"End Time"}
+                                    value={endTimeState}
+                                    onPress={() => {
+                                        setTimeSelect(true);
+                                        setTimeSlotName("end");
+                                        // setSelectedTime(newDynamicObject);
+                                    }}
+                                />
+                                {
+                                    descriptionState !== null ?
+                                        <InputField
+                                            defaultValue={descriptionState}
+                                            updateValue={(value) => {
+                                                setDescription(value);
+                                                if (route.params.edit) route.params.arrayObject[route.params.objectIndex].description = value;
+                                            }}
+                                            data={"newDynamicObject"}
+                                            value={null}
+                                            multiline={true} numberOfLines={4}
+                                            labelText={"Description"} /> : null
+                                }
+
+                                <DropDownList
+                                    //key={`${componentName.fieldName}${componentName.captionText}`}
+                                    selectedValue={FindObjectWithID(projIDState, dropListState.projectList).Description}
+                                    labelText={"Project ID"}
+                                    dropItems={dropListState.projectList}
+                                    setValueFunction={(itemValue, itemIndex) => {
+                                        setProjID(itemIndex);
+                                        //    newDynamicObject.recordState(itemValue);
+                                        //   console.log(itemValue + JSON.stringify(newDynamicObject));
+                                    }}
+                                />
+
+                                <DropDownList
+                                    //key={`${componentName.fieldName}${componentName.captionText}`}
+                                    selectedValue={FindObjectWithID(taskCategoryIDState, dropListState.taskCategoryList).Description}
+                                    labelText={"Task Type"}
+                                    dropItems={dropListState.taskCategoryList}
+                                    setValueFunction={(itemValue, itemIndex) => {
+                                        setTaskCategoryID(itemIndex);
+                                        //    newDynamicObject.recordState(itemValue);
+                                        //   console.log(itemValue + JSON.stringify(newDynamicObject));
+                                    }}
+                                />
+
+                                <Button_Fill label="Done" onPress={
+                                    () => {
+                                        if (!route.params.edit) {
+                                            route.params.arrayObject != null ?
+                                                route.params.arrayObject.push(
+                                                    {
+                                                        startTime: startTimeState,
+                                                        endTime: endTimeState,
+                                                        description: descriptionState,
+                                                        id: -1,
+                                                        slno: route.params.arrayObject.length + 1,
+                                                        taskHours: getTimeDiff(startTimeState, endTimeState),
+                                                        projID: projIDState,
+                                                        taskCategoryID: taskCategoryIDState
+                                                    }
+                                                ) : route.params.arrayObject = [
+                                                    {
+                                                        startTime: startTimeState,
+                                                        endTime: endTimeState,
+                                                        description: descriptionState,
+                                                        id: -1,
+                                                        slno: 1,
+                                                        taskHours: getTimeDiff(startTimeState, endTimeState),
+                                                        projID: projIDState,
+                                                        taskCategoryID: taskCategoryIDState
+                                                    }
+                                                ];
+                                            console.log(route.params.arrayObject);
+                                        }
+                                        else {
+                                            route.params.arrayObject[route.params.objectIndex].taskHours = getTimeDiff(startTimeState, endTimeState)
+                                            route.params.arrayObject[route.params.objectIndex].projID = projIDState;
+                                            route.params.arrayObject[route.params.objectIndex].taskCategoryID = taskCategoryIDState;
+                                            route.params.arrayObject[route.params.objectIndex].startTime = startTimeState;
+                                            route.params.arrayObject[route.params.objectIndex].endTime = endTimeState;
+                                        }
+
+                                        navigation.pop()
+
+                                        //    CheckAuthentication(userName, password);
+                                        //    setisAuthentication(true);
+
+                                    }
+                                } />
+                            </View>
+                        </View>
+
+                        <View>{
+                            timeSelect ?
+                                <DateTimePicker
+                                    testID="dateTimePicker"
+                                    value={new Date()}
+                                    mode={"time"}
+                                    is24Hour={true}
+                                    display="default"
+                                    onChange={(evet, time = null) => {
+                                        setTimeSelect(false);
+                                        if (evet.type === 'set') {
+                                            let hourText = time.getHours();
+                                            let minuteText = time.getMinutes();
+                                            let combinedTime = `${hourText}:${minuteText}:00`;
+
+                                            //setselectedTime(timeOut => timeOut.paramValue = combinedTime);
+
+                                            switch (timeSlotName) {
+                                                case "start":
+                                                    if (route.params.edit) route.params.arrayObject[route.params.objectIndex].startTime = combinedTime;
+                                                    setStartTime(combinedTime);
+                                                    break;
+
+                                                case "end":
+                                                    if (route.params.edit) route.params.arrayObject[route.params.objectIndex].endTime = combinedTime;
+                                                    setEndTime(combinedTime);
+                                                    break;
+
+                                                default:
+                                                    break;
+                                            }
+                                            //settimeSheetValue(route.params.arrayObject[route.params.objectIndex]);
+                                            console.log(route.params.arrayObject);
+                                            // this.forc
+                                        }
+                                    }}
+                                /> : null
 
 
+                        }</View>
+
+                    </ScrollView> : null
             }
         </ScreenContainer>
     )
@@ -1138,6 +1226,43 @@ export const DataListDisplay_Screen = ({ navigation, route }) => {
                         }}
                     />
                 )
+
+                case "WorkLogStrip":
+                    return (
+                        <WorkLogStrip
+                            label={
+                                ShortenText(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.titleKey))
+                            }
+                            subNote={
+                                GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.subNoteKey)
+                            }
+                            date={
+                                GetDateWithSpacer(new Date(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.dateKey)), " ", true)
+                            }
+                            onDeletePress={() => {
+                                setdeletePopup(!deletePopup);
+                                setcurrentDeleteItem(item);
+                            }}
+    
+                            fileStatus={
+                                statusArray
+                            }
+    
+                            onEditPress={() => {
+                                navigation.push('DynamicAddEdit',
+                                    {
+                                        targetTypeID: route.params.targetTypeID,
+                                        pageFormat: route.params.sectionFormat,
+                                        edit: true,
+                                        data:
+                                        {
+                                            item: item
+                                        }
+                                    })
+                            }}
+                        />
+                    )
+
             default:
                 break;
         }
