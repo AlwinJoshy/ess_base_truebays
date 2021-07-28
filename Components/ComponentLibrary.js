@@ -593,6 +593,7 @@ export class DropDownList extends React.Component {
                                 showLeaveTypeModal: false
                             });
                         }} style={DropDownList_Style.modelInnerContainer}>
+                            <ScrollView style={DropDownList_Style.scrollContainer}>
                             {
                                 this.props.dropItems !== null ? this.props.dropItems.map((item, index) => {
                                     return (
@@ -617,6 +618,7 @@ export class DropDownList extends React.Component {
                                 })
                                     : null
                             }
+                            </ScrollView>
                         </TouchableOpacity>
                     </View>
                 </Modal>
@@ -641,6 +643,8 @@ const DropDownList_Style = StyleSheet.create({
         color: colorPallet.theme.default.buttonTextColor,
         fontWeight: "700"
     },
+    scrollContainer:{
+    },
     modelContainer: {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
         width: '100%',
@@ -648,6 +652,7 @@ const DropDownList_Style = StyleSheet.create({
         alignItems: 'center'
     },
     modelInnerContainer: {
+        flexDirection:'column',
         justifyContent: 'center',
         width: '85%',
         height: '100%',
