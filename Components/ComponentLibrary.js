@@ -1154,6 +1154,17 @@ export class WorkLogStrip extends React.Component {
                         <View style={WorkLogStrip_Style.dateTextContainer}>
                             <Text style={WorkLogStrip_Style.dateText}>{this.props.subNote}</Text>
                             <Text style={WorkLogStrip_Style.dateText}>{`${this.props.date}`}</Text>
+                            {/*
+                            <Text style={DateAddressRemarkStrip_Style.statusText}>{`Status : ${this.props.rplyStatus != null &&
+                                this.props.rplyStatus != undefined &&
+                                this.props.rplyStatus != 0 &&
+                                this.props.fileStatus &&
+                                this.props.fileStatus != undefined &&
+                                this.props.fileStatus[this.props.rplyStatus]
+                                ? this.props.fileStatus[this.props.rplyStatus - 1].Description : "Pending"}`}
+                            </Text>
+                            */}
+                            <Text style={DateAddressRemarkStrip_Style.statusText}>{`Status :  ${this.props.rplyStatus.ReplyData.rplyStatus}`}</Text>
                         </View>
                     </View>
 

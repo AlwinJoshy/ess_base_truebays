@@ -19,7 +19,8 @@ import {
     LeaveOnToday, RequestResponceNOtification,
     TextButton, NameAndValueStrip,
     NameAndNumberLargeStrip, aspectRatio,
-    Button_Outline, TimeListEditor
+    Button_Outline, TimeListEditor,
+    WorkLogStrip
 
 } from '../Components/ComponentLibrary.js'
 import { POSTAPIRequest, GETAPIRequest, DELETEAPIRequest, POSTAPIRequest_Combiner } from '../BackendAPI.js'
@@ -633,50 +634,90 @@ export const Register_Screen = ({ navigation }) => {
     const [isAuthentication, setisAuthentication] = useState(false)
     const [userName, setUserName] = useState("");
     const [userEmail, setUserEmail] = useState("");
-    const [password, setPassword] = useState("")
+    const [contactNo, setContactNo] = useState("")
     const [errorFound, seterrorFound] = useState(false)
     const [errorMessage, seterrorMessage] = useState("")
     const [messageColor, setmessageColor] = useState(1)
     const [companyID, setCompanyID] = useState(-1)
 
     useEffect(() => {
-        /*
-        GetAuthenticationDetails().then((res) => {
-            console.log(res);
-            if (res) {
-                GoToDashboard();
-            }
-        })
-        */
+        //   seterrorMessage("Not Done..");
+        // SendRegistrationData();
         return () => { }
     }, [])
 
-    const CheckAuthentication = (userID, password) => {
-        POSTAPIRequest("POST", `${storeLib.baseUrl}ESSApi/LoginAuthenticationApi/`, { userID: userID, Password: password })
+    const SendRegistrationData = (userID, password) => {
+
+
+        function isNumeric(value) {
+            return /^-?\d$/.test(value);
+        }
+
+        if (userName == "" || userName.length < 1) {
+            console.log("Press..");
+            seterrorFound(true)
+            seterrorMessage("Enter a valide user name");
+            setmessageColor(1)
+            return;
+        }
+        else if (userEmail.length < 1 || userEmail.indexOf('@') == -1 || userEmail.indexOf('.') == -1) {
+            seterrorFound(true)
+            seterrorMessage("Enter a valide email");
+            setmessageColor(1)
+            return;
+        }
+        else if (contactNo == "" && contactNo.length < 1 && !isNumeric(contactNo)) {
+            seterrorFound(true)
+            seterrorMessage("Enter a valide phone");
+            setmessageColor(1)
+            return;
+        }
+
+        else if (companyID == -1) {
+            seterrorFound(true)
+            seterrorMessage("Select a company");
+            setmessageColor(1)
+            return;
+        }
+
+        seterrorFound(false)
+        setmessageColor(1)
+
+
+        POSTAPIRequest("POST", `${storeLib.baseUrl}essapi/UserRegistrationApi/Registration`,
+            {
+                data: {
+                    companyID: companyID,
+                    userName: userName,
+                    email: userEmail,
+                    contactNo: contactNo
+                }
+            })
             .then(
                 res => {
                     console.log(res);
-                    res.UserFullName ?
-                        (
-                            UserDetails(res),
-                            SetUserName(res.UserFullName, userID),
-                            SetUserPassword(password),
-                            GoToDashboard(),
-                            setmessageColor(2),
-                            seterrorMessage("Access Granted.")
-                        )
-                        : (
-                            setisAuthentication(false),
-                            new Exception("No such user found.")
-                        )
+                    switch (res) {
+                        case "Success":
+                            navigation.pop();
+                            alert("You will be contacted by the administrator upon review");
+                            break;
+
+                        case "User Name Already Exists":
+                            seterrorFound(true)
+                            seterrorMessage("Username already taken");
+                            setmessageColor(1)
+                            break;
+
+                        default:
+                            break;
+                    }
+
+
+
                 }
             ).catch(
                 err => {
-                    console.log(err)
-                    seterrorFound(true);
-                    setmessageColor(0);
-                    seterrorMessage("please enter correct credentials.");
-                    setisAuthentication(false);
+
                 }
             )
     }
@@ -698,30 +739,31 @@ export const Register_Screen = ({ navigation }) => {
                         <VerticalSpacer height={200 * aspectRatio} />
                         <InputField labelText={"Username"} onChangeText={(value) => setUserName(value)} />
                         <InputField labelText={"E-mail"} onChangeText={(value) => setUserEmail(value)} />
-                        <InputField labelText={"Contact Number"} onChangeText={(value) => setUserEmail(value)} />
+                        <InputField labelText={"Contact Number"} onChangeText={(value) => setContactNo(value)} />
                         <DropDownList
-                                    //key={`${componentName.fieldName}${componentName.captionText}`}
-                                    selectedValue={1}
-                                    labelText={"Project ID"}
-                                    dropItems={[
-                                        {
-                                            Description:"Modern Veterinary Clinic",
-                                            ID: 1
-                                        },
-                                        {
-                                            Description:"MVC",
-                                            ID: 2
-                                        }
-                                    ]}
-                                    setValueFunction={(itemValue, itemIndex) => {
-                                        setCompanyID(itemIndex);
-                                        //    newDynamicObject.recordState(itemValue);
-                                        //   console.log(itemValue + JSON.stringify(newDynamicObject));
-                                    }}
-                                />
+                            //key={`${componentName.fieldName}${componentName.captionText}`}
+                            selectedValue={"Select Organization"}
+                            labelText={"Company ID"}
+                            dropItems={[
+                                {
+                                    Description: "Modern Veterinary Clinic",
+                                    ID: "001"
+                                },
+                                {
+                                    Description: "Other",
+                                    ID: "002"
+                                }
+                            ]}
+                            setValueFunction={(itemValue, itemIndex) => {
+                                setCompanyID(itemIndex);
+                                //    newDynamicObject.recordState(itemValue);
+                                //   console.log(itemValue + JSON.stringify(newDynamicObject));
+                            }}
+                        />
                         <ErrorMessage visible={errorFound} msgType={messageColor} messageText={errorMessage} />
                         <Button_Fill label="Submit" onPress={
                             () => {
+                                SendRegistrationData();
                                 //navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
                                 //    CheckAuthentication(userName, password);
                                 //   setisAuthentication(true);
@@ -1227,41 +1269,46 @@ export const DataListDisplay_Screen = ({ navigation, route }) => {
                     />
                 )
 
-                case "WorkLogStrip":
-                    return (
-                        <WorkLogStrip
-                            label={
-                                ShortenText(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.titleKey))
-                            }
-                            subNote={
-                                GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.subNoteKey)
-                            }
-                            date={
-                                GetDateWithSpacer(new Date(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.dateKey)), " ", true)
-                            }
-                            onDeletePress={() => {
-                                setdeletePopup(!deletePopup);
-                                setcurrentDeleteItem(item);
-                            }}
-    
-                            fileStatus={
-                                statusArray
-                            }
-    
-                            onEditPress={() => {
-                                navigation.push('DynamicAddEdit',
+            case "WorkLogStrip":
+
+                return (
+                    <WorkLogStrip
+                        label={
+                            ShortenText(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.titleKey))
+                        }
+                        subNote={
+                            GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.subNoteKey)
+                        }
+                        date={
+                            GetDateWithSpacer(new Date(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.dateKey)), " ", true)
+                        }
+                        onDeletePress={() => {
+                            setdeletePopup(!deletePopup);
+                            setcurrentDeleteItem(item);
+                        }}
+
+                        fileStatus={
+                            statusArray
+                        }
+
+                        rplyStatus={
+                            item
+                        }
+
+                        onEditPress={() => {
+                            navigation.push('DynamicAddEdit',
+                                {
+                                    targetTypeID: route.params.targetTypeID,
+                                    pageFormat: route.params.sectionFormat,
+                                    edit: true,
+                                    data:
                                     {
-                                        targetTypeID: route.params.targetTypeID,
-                                        pageFormat: route.params.sectionFormat,
-                                        edit: true,
-                                        data:
-                                        {
-                                            item: item
-                                        }
-                                    })
-                            }}
-                        />
-                    )
+                                        item: item
+                                    }
+                                })
+                        }}
+                    />
+                )
 
             default:
                 break;
