@@ -1500,7 +1500,7 @@ export class DashboardButtonHolder extends React.Component {
 const DashboardButtonHolder_Style = StyleSheet.create({
     innerContainer: {
         width: '95%',
-        height: '20%',
+        height: 150,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',

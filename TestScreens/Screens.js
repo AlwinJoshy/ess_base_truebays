@@ -411,6 +411,7 @@ export const Request_Screen = ({ navigation }) => {
     const [firstPageDisplay, setfirstPageDisplay] = useState(false);
     const [buttonOptionArray, setbuttonOptionArray] = useState([])
 
+
     useEffect(() => {
 
         if (!firstPageDisplay) {
@@ -452,6 +453,7 @@ export const Request_Screen = ({ navigation }) => {
 
     const GetMenu = (array) => {
         return (
+
             array.map((item, index) =>
                 index % 2 == 0 ? (
                     console.log(item),
@@ -497,10 +499,14 @@ export const Request_Screen = ({ navigation }) => {
 
     return (
         <ScreenContainer>
-            <VerticalSpacer height={20} />
-            {
-                GetMenu(buttonOptionArray)
-            }
+            <ScrollView style={styles.scrollContainer}>
+
+                <VerticalSpacer height={20}/>
+                {
+                    GetMenu(buttonOptionArray)
+                }
+                <VerticalSpacer height={20}/>
+            </ScrollView>
         </ScreenContainer>
     );
 }
