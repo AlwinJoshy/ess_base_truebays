@@ -496,10 +496,12 @@ export const Request_Screen = ({ navigation }) => {
 
     return (
         <ScreenContainer>
+            <ScrollView style={styles.scrollContainer}>
             <VerticalSpacer height={20} />
             {
                 GetMenu(buttonOptionArray)
             }
+            </ScrollView>
         </ScreenContainer>
     );
 }
@@ -638,48 +640,46 @@ export const Register_Screen = ({ navigation }) => {
     const [errorMessage, seterrorMessage] = useState("")
     const [messageColor, setmessageColor] = useState(1)
     const [companyID, setCompanyID] = useState(-1)
+    const [companyNameList, setCompanyNameList] = useState([
+        {
+            Description:"Modern Veterinary Clinic",
+            ID: 1
+        },
+        {
+            Description:"MVC",
+            ID: 2
+        }
+    ])
 
     useEffect(() => {
-        /*
-        GetAuthenticationDetails().then((res) => {
-            console.log(res);
-            if (res) {
-                GoToDashboard();
-            }
-        })
-        */
+        GetCompanyNameList();
         return () => { }
     }, [])
 
-    const CheckAuthentication = (userID, password) => {
-        POSTAPIRequest("POST", `${storeLib.baseUrl}ESSApi/LoginAuthenticationApi/`, { userID: userID, Password: password })
-            .then(
-                res => {
-                    console.log(res);
-                    res.UserFullName ?
-                        (
-                            UserDetails(res),
-                            SetUserName(res.UserFullName, userID),
-                            SetUserPassword(password),
-                            GoToDashboard(),
-                            setmessageColor(2),
-                            seterrorMessage("Access Granted.")
-                        )
-                        : (
-                            setisAuthentication(false),
-                            new Exception("No such user found.")
-                        )
-                }
-            ).catch(
-                err => {
-                    console.log(err)
-                    seterrorFound(true);
-                    setmessageColor(0);
-                    seterrorMessage("please enter correct credentials.");
-                    setisAuthentication(false);
-                }
-            )
+    const ConvertFormat = (companyDataAttay) => {
+        dataList = [];
+
+        for (let index = 0; index < companyDataAttay.length; index++) {
+            
+            dataList.push({
+                Description:companyDataAttay[index].CompanyName,
+                ID: companyDataAttay[index].CompanyCode
+            })
+        }
+        return dataList;
     }
+
+    const GetCompanyNameList = () => {
+
+        GETAPIRequest(`${storeLib.baseUrl}essapi/UserRegistrationApi/companyDetails/`, 
+        []).then( res => {
+            setCompanyNameList(ConvertFormat(res));
+            console.log(ConvertFormat(res));
+        }).catch(err => console.log(err));
+
+    }
+
+
 
     const GoToDashboard = () => {
         navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
@@ -701,18 +701,9 @@ export const Register_Screen = ({ navigation }) => {
                         <InputField labelText={"Contact Number"} onChangeText={(value) => setUserEmail(value)} />
                         <DropDownList
                                     //key={`${componentName.fieldName}${componentName.captionText}`}
-                                    selectedValue={1}
+                                    selectedValue={null}
                                     labelText={"Project ID"}
-                                    dropItems={[
-                                        {
-                                            Description:"Modern Veterinary Clinic",
-                                            ID: 1
-                                        },
-                                        {
-                                            Description:"MVC",
-                                            ID: 2
-                                        }
-                                    ]}
+                                    dropItems={companyNameList}
                                     setValueFunction={(itemValue, itemIndex) => {
                                         setCompanyID(itemIndex);
                                         //    newDynamicObject.recordState(itemValue);
