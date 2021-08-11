@@ -19,8 +19,7 @@ import {
     LeaveOnToday, RequestResponceNOtification,
     TextButton, NameAndValueStrip,
     NameAndNumberLargeStrip, aspectRatio,
-    Button_Outline, TimeListEditor,
-    WorkLogStrip
+    Button_Outline, TimeListEditor
 
 } from '../Components/ComponentLibrary.js'
 import { POSTAPIRequest, GETAPIRequest, DELETEAPIRequest, POSTAPIRequest_Combiner } from '../BackendAPI.js'
@@ -411,7 +410,6 @@ export const Request_Screen = ({ navigation }) => {
     const [firstPageDisplay, setfirstPageDisplay] = useState(false);
     const [buttonOptionArray, setbuttonOptionArray] = useState([])
 
-
     useEffect(() => {
 
         if (!firstPageDisplay) {
@@ -453,7 +451,6 @@ export const Request_Screen = ({ navigation }) => {
 
     const GetMenu = (array) => {
         return (
-
             array.map((item, index) =>
                 index % 2 == 0 ? (
                     console.log(item),
@@ -500,12 +497,10 @@ export const Request_Screen = ({ navigation }) => {
     return (
         <ScreenContainer>
             <ScrollView style={styles.scrollContainer}>
-
-                <VerticalSpacer height={20}/>
-                {
-                    GetMenu(buttonOptionArray)
-                }
-                <VerticalSpacer height={20}/>
+            <VerticalSpacer height={20} />
+            {
+                GetMenu(buttonOptionArray)
+            }
             </ScrollView>
         </ScreenContainer>
     );
@@ -640,93 +635,51 @@ export const Register_Screen = ({ navigation }) => {
     const [isAuthentication, setisAuthentication] = useState(false)
     const [userName, setUserName] = useState("");
     const [userEmail, setUserEmail] = useState("");
-    const [contactNo, setContactNo] = useState("")
+    const [password, setPassword] = useState("")
     const [errorFound, seterrorFound] = useState(false)
     const [errorMessage, seterrorMessage] = useState("")
     const [messageColor, setmessageColor] = useState(1)
     const [companyID, setCompanyID] = useState(-1)
+    const [companyNameList, setCompanyNameList] = useState([
+        {
+            Description:"Modern Veterinary Clinic",
+            ID: 1
+        },
+        {
+            Description:"MVC",
+            ID: 2
+        }
+    ])
 
     useEffect(() => {
-        //   seterrorMessage("Not Done..");
-        // SendRegistrationData();
+        GetCompanyNameList();
         return () => { }
     }, [])
 
-    const SendRegistrationData = (userID, password) => {
+    const ConvertFormat = (companyDataAttay) => {
+        dataList = [];
 
-
-        function isNumeric(value) {
-            return /^-?\d$/.test(value);
-        }
-
-        if (userName == "" || userName.length < 1) {
-            console.log("Press..");
-            seterrorFound(true)
-            seterrorMessage("Enter a valide user name");
-            setmessageColor(1)
-            return;
-        }
-        else if (userEmail.length < 1 || userEmail.indexOf('@') == -1 || userEmail.indexOf('.') == -1) {
-            seterrorFound(true)
-            seterrorMessage("Enter a valide email");
-            setmessageColor(1)
-            return;
-        }
-        else if (contactNo == "" && contactNo.length < 1 && !isNumeric(contactNo)) {
-            seterrorFound(true)
-            seterrorMessage("Enter a valide phone");
-            setmessageColor(1)
-            return;
-        }
-
-        else if (companyID == -1) {
-            seterrorFound(true)
-            seterrorMessage("Select a company");
-            setmessageColor(1)
-            return;
-        }
-
-        seterrorFound(false)
-        setmessageColor(1)
-
-
-        POSTAPIRequest("POST", `${storeLib.baseUrl}essapi/UserRegistrationApi/Registration`,
-            {
-                data: {
-                    companyID: companyID,
-                    userName: userName,
-                    email: userEmail,
-                    contactNo: contactNo
-                }
+        for (let index = 0; index < companyDataAttay.length; index++) {
+            
+            dataList.push({
+                Description:companyDataAttay[index].CompanyName,
+                ID: companyDataAttay[index].CompanyCode
             })
-            .then(
-                res => {
-                    console.log(res);
-                    switch (res) {
-                        case "Success":
-                            navigation.pop();
-                            alert("You will be contacted by the administrator upon review");
-                            break;
-
-                        case "User Name Already Exists":
-                            seterrorFound(true)
-                            seterrorMessage("Username already taken");
-                            setmessageColor(1)
-                            break;
-
-                        default:
-                            break;
-                    }
-
-
-
-                }
-            ).catch(
-                err => {
-
-                }
-            )
+        }
+        return dataList;
     }
+
+    const GetCompanyNameList = () => {
+
+        GETAPIRequest(`${storeLib.baseUrl}essapi/UserRegistrationApi/companyDetails/`, 
+        []).then( res => {
+            setCompanyNameList(ConvertFormat(res));
+            console.log(ConvertFormat(res));
+        }).catch(err => console.log(err));
+
+    }
+
+
 
     const GoToDashboard = () => {
         navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
@@ -745,31 +698,21 @@ export const Register_Screen = ({ navigation }) => {
                         <VerticalSpacer height={200 * aspectRatio} />
                         <InputField labelText={"Username"} onChangeText={(value) => setUserName(value)} />
                         <InputField labelText={"E-mail"} onChangeText={(value) => setUserEmail(value)} />
-                        <InputField labelText={"Contact Number"} onChangeText={(value) => setContactNo(value)} />
+                        <InputField labelText={"Contact Number"} onChangeText={(value) => setUserEmail(value)} />
                         <DropDownList
-                            //key={`${componentName.fieldName}${componentName.captionText}`}
-                            selectedValue={"Select Organization"}
-                            labelText={"Company ID"}
-                            dropItems={[
-                                {
-                                    Description: "Modern Veterinary Clinic",
-                                    ID: "001"
-                                },
-                                {
-                                    Description: "Other",
-                                    ID: "002"
-                                }
-                            ]}
-                            setValueFunction={(itemValue, itemIndex) => {
-                                setCompanyID(itemIndex);
-                                //    newDynamicObject.recordState(itemValue);
-                                //   console.log(itemValue + JSON.stringify(newDynamicObject));
-                            }}
-                        />
+                                    //key={`${componentName.fieldName}${componentName.captionText}`}
+                                    selectedValue={null}
+                                    labelText={"Project ID"}
+                                    dropItems={companyNameList}
+                                    setValueFunction={(itemValue, itemIndex) => {
+                                        setCompanyID(itemIndex);
+                                        //    newDynamicObject.recordState(itemValue);
+                                        //   console.log(itemValue + JSON.stringify(newDynamicObject));
+                                    }}
+                                />
                         <ErrorMessage visible={errorFound} msgType={messageColor} messageText={errorMessage} />
                         <Button_Fill label="Submit" onPress={
                             () => {
-                                SendRegistrationData();
                                 //navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
                                 //    CheckAuthentication(userName, password);
                                 //   setisAuthentication(true);
@@ -1275,46 +1218,41 @@ export const DataListDisplay_Screen = ({ navigation, route }) => {
                     />
                 )
 
-            case "WorkLogStrip":
-
-                return (
-                    <WorkLogStrip
-                        label={
-                            ShortenText(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.titleKey))
-                        }
-                        subNote={
-                            GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.subNoteKey)
-                        }
-                        date={
-                            GetDateWithSpacer(new Date(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.dateKey)), " ", true)
-                        }
-                        onDeletePress={() => {
-                            setdeletePopup(!deletePopup);
-                            setcurrentDeleteItem(item);
-                        }}
-
-                        fileStatus={
-                            statusArray
-                        }
-
-                        rplyStatus={
-                            item
-                        }
-
-                        onEditPress={() => {
-                            navigation.push('DynamicAddEdit',
-                                {
-                                    targetTypeID: route.params.targetTypeID,
-                                    pageFormat: route.params.sectionFormat,
-                                    edit: true,
-                                    data:
+                case "WorkLogStrip":
+                    return (
+                        <WorkLogStrip
+                            label={
+                                ShortenText(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.titleKey))
+                            }
+                            subNote={
+                                GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.subNoteKey)
+                            }
+                            date={
+                                GetDateWithSpacer(new Date(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.dateKey)), " ", true)
+                            }
+                            onDeletePress={() => {
+                                setdeletePopup(!deletePopup);
+                                setcurrentDeleteItem(item);
+                            }}
+    
+                            fileStatus={
+                                statusArray
+                            }
+    
+                            onEditPress={() => {
+                                navigation.push('DynamicAddEdit',
                                     {
-                                        item: item
-                                    }
-                                })
-                        }}
-                    />
-                )
+                                        targetTypeID: route.params.targetTypeID,
+                                        pageFormat: route.params.sectionFormat,
+                                        edit: true,
+                                        data:
+                                        {
+                                            item: item
+                                        }
+                                    })
+                            }}
+                        />
+                    )
 
             default:
                 break;
