@@ -1239,7 +1239,9 @@ export const DataListDisplay_Screen = ({ navigation, route }) => {
                             fileStatus={
                                 statusArray
                             }
-    
+                            rplyStatus={
+                                item
+                            }    
                             onEditPress={() => {
                                 navigation.push('DynamicAddEdit',
                                     {
