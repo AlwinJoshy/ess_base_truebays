@@ -19,7 +19,8 @@ import {
     LeaveOnToday, RequestResponceNOtification,
     TextButton, NameAndValueStrip,
     NameAndNumberLargeStrip, aspectRatio,
-    Button_Outline
+    Button_Outline, TimeListEditor,
+    WorkLogStrip
 
 } from '../Components/ComponentLibrary.js'
 import { POSTAPIRequest, GETAPIRequest, DELETEAPIRequest, POSTAPIRequest_Combiner } from '../BackendAPI.js'
@@ -41,6 +42,7 @@ import { FlatList } from 'react-native-gesture-handler'
 import Spinner from 'react-native-loading-spinner-overlay';
 import { FontAwesome } from '@expo/vector-icons';
 import { interpolate, Value } from 'react-native-reanimated'
+import { useContext } from 'react/cjs/react.production.min'
 
 const Tab = createBottomTabNavigator();
 
@@ -139,6 +141,8 @@ const BackButtonText = (navigation) => {
     );
 }
 
+const dashboardScaleIOS = (Platform.OS === 'ios' ? 2 : 1);
+
 export const Dashboard_Screen = ({ navigation }) => {
     return (
         <Tab.Navigator
@@ -212,7 +216,7 @@ export const PayslipSheet_Screen = ({ navigation }) => {
     const LoadSlip = (id) => {
         GETAPIRequest(`${storeLib.baseUrl}essapi/PaySlipApi/GetPayslipDetails`, ['PayrollID', id, 'EmployeeID', 'MVC01']).then(res => {
             setSlipDataObject(res);
-            console.log(res);
+            // console.log(res);
         }).catch(err => console.log(err));
     }
 
@@ -244,7 +248,7 @@ export const PayslipSheet_Screen = ({ navigation }) => {
                     <View style={{ width: '85%' }}>
                         <DropDownList
                             //  key={`${componentName.fieldName}${componentName.captionText}`}
-                        
+
                             selectedValue={monthSlipArray != undefined && monthSlipArray != null && monthSlipArray.length !== 0 ? monthSlipArray.length : 0}
                             // labelText={"componentName.captionText"}
                             dropItems={monthSlipArray}
@@ -262,7 +266,7 @@ export const PayslipSheet_Screen = ({ navigation }) => {
                 <InfoCard heading={`Earnings`}>
                     <View key={MakeID(8)}>
                         <View>{
-                         //   console.log("tahe length : " + slipData.Earnings !== undefined ? slipData.Earnings.length : "wdad"),
+                            //   console.log("tahe length : " + slipData.Earnings !== undefined ? slipData.Earnings.length : "wdad"),
 
                             slipData.Earnings != null ? slipData.Earnings.map((item, index) => {
                                 return (
@@ -278,7 +282,7 @@ export const PayslipSheet_Screen = ({ navigation }) => {
                 <InfoCard heading={`Deductions`}>
                     <View key={MakeID(8)}>
                         <View>{
-                          //  console.log("tahe length : " + slipData.Deductions !== undefined ? slipData.Deductions.length : "wdad"),
+                            //  console.log("tahe length : " + slipData.Deductions !== undefined ? slipData.Deductions.length : "wdad"),
 
                             slipData.Deductions != null && slipData.Deductions.length > 0 ? slipData.Deductions.map((item, index) => {
                                 return (
@@ -417,7 +421,7 @@ export const Request_Screen = ({ navigation }) => {
                     GetUserID()
                 ]).then(req => {
                     setbuttonOptionArray(req);
-                    // console.log(req);
+                    console.log(req);
                 }).catch(err => {
                     console.log(err);
                 });
@@ -495,10 +499,12 @@ export const Request_Screen = ({ navigation }) => {
 
     return (
         <ScreenContainer>
+            <ScrollView style={styles.scrollContainer}>
             <VerticalSpacer height={20} />
             {
                 GetMenu(buttonOptionArray)
             }
+            </ScrollView>
         </ScreenContainer>
     );
 }
@@ -528,7 +534,7 @@ export const Calander_Screen = ({ navigation }) => {
             'LoginID', "test",
             'Date', dateString
         ]).then(res => {
-            console.log(res);
+            //   console.log(res);
             settimingsArray(res.teamsTimings);
             setisAuthentication(false)
         }).catch(err => {
@@ -543,7 +549,7 @@ export const Calander_Screen = ({ navigation }) => {
             'companyCode', storeLib.companyCode,
             'LoginID', "test",
         ]).then(res => {
-            console.log(res);
+            //   console.log(res);
             setTeams(res.teams);
             setisAuthentication(false)
         }).catch(err => {
@@ -636,48 +642,47 @@ export const Register_Screen = ({ navigation }) => {
     const [errorFound, seterrorFound] = useState(false)
     const [errorMessage, seterrorMessage] = useState("")
     const [messageColor, setmessageColor] = useState(1)
+    const [companyID, setCompanyID] = useState(-1)
+    const [companyNameList, setCompanyNameList] = useState([
+        {
+            Description:"Modern Veterinary Clinic",
+            ID: 1
+        },
+        {
+            Description:"MVC",
+            ID: 2
+        }
+    ])
 
     useEffect(() => {
-        /*
-        GetAuthenticationDetails().then((res) => {
-            console.log(res);
-            if (res) {
-                GoToDashboard();
-            }
-        })
-        */
+        GetCompanyNameList();
         return () => { }
     }, [])
 
-    const CheckAuthentication = (userID, password) => {
-        POSTAPIRequest("POST", `${storeLib.baseUrl}ESSApi/LoginAuthenticationApi/`, { userID: userID, Password: password })
-            .then(
-                res => {
-                    console.log(res);
-                    res.UserFullName ?
-                        (
-                            UserDetails(res),
-                            SetUserName(res.UserFullName, userID),
-                            SetUserPassword(password),
-                            GoToDashboard(),
-                            setmessageColor(2),
-                            seterrorMessage("Access Granted.")
-                        )
-                        : (
-                            setisAuthentication(false),
-                            new Exception("No such user found.")
-                        )
-                }
-            ).catch(
-                err => {
-                    console.log(err)
-                    seterrorFound(true);
-                    setmessageColor(0);
-                    seterrorMessage("please enter correct credentials.");
-                    setisAuthentication(false);
-                }
-            )
+    const ConvertFormat = (companyDataAttay) => {
+        dataList = [];
+
+        for (let index = 0; index < companyDataAttay.length; index++) {
+            
+            dataList.push({
+                Description:companyDataAttay[index].CompanyName,
+                ID: companyDataAttay[index].CompanyCode
+            })
+        }
+        return dataList;
     }
+
+    const GetCompanyNameList = () => {
+
+        GETAPIRequest(`${storeLib.baseUrl}essapi/UserRegistrationApi/companyDetails/`, 
+        []).then( res => {
+            setCompanyNameList(ConvertFormat(res));
+            console.log(ConvertFormat(res));
+        }).catch(err => console.log(err));
+
+    }
+
+
 
     const GoToDashboard = () => {
         navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
@@ -696,7 +701,18 @@ export const Register_Screen = ({ navigation }) => {
                         <VerticalSpacer height={200 * aspectRatio} />
                         <InputField labelText={"Username"} onChangeText={(value) => setUserName(value)} />
                         <InputField labelText={"E-mail"} onChangeText={(value) => setUserEmail(value)} />
-                        <InputField labelText={"Password"} onChangeText={(value) => setPassword(value)} secureText={true} />
+                        <InputField labelText={"Contact Number"} onChangeText={(value) => setUserEmail(value)} />
+                        <DropDownList
+                                    //key={`${componentName.fieldName}${componentName.captionText}`}
+                                    selectedValue={null}
+                                    labelText={"Project ID"}
+                                    dropItems={companyNameList}
+                                    setValueFunction={(itemValue, itemIndex) => {
+                                        setCompanyID(itemIndex);
+                                        //    newDynamicObject.recordState(itemValue);
+                                        //   console.log(itemValue + JSON.stringify(newDynamicObject));
+                                    }}
+                                />
                         <ErrorMessage visible={errorFound} msgType={messageColor} messageText={errorMessage} />
                         <Button_Fill label="Submit" onPress={
                             () => {
@@ -738,7 +754,7 @@ export const Login_Screen = ({ navigation }) => {
 
     useEffect(() => {
         GetAuthenticationDetails().then((res) => {
-            console.log(res);
+            //   console.log(res);
             if (res) {
                 GoToDashboard();
             }
@@ -751,7 +767,7 @@ export const Login_Screen = ({ navigation }) => {
         POSTAPIRequest("POST", `${storeLib.baseUrl}ESSApi/LoginAuthenticationApi/`, { userID: userID, Password: password })
             .then(
                 res => {
-                    console.log(res);
+                    //    console.log(res);
                     res.UserFullName ?
                         (
                             UserDetails(res),
@@ -856,6 +872,244 @@ export const Login_Screen = ({ navigation }) => {
     );
 }
 
+export const TimeSheetAddEdit_Screen = ({ navigation, route }) => {
+
+    const [timeSelect, setTimeSelect] = useState(false)
+    const [timeSlotName, setTimeSlotName] = useState("")
+    const [startTimeState, setStartTime] = useState("")
+    const [endTimeState, setEndTime] = useState("")
+    const [descriptionState, setDescription] = useState(null)
+    const [projIDState, setProjID] = useState(null)
+    const [taskCategoryIDState, setTaskCategoryID] = useState(null)
+
+    const [dropListState, setDropListState] = useState(null)
+    const [screenDisplayState, setScreenDisplayState] = useState(false)
+
+    useEffect(() => {
+        if (route.params.edit) {
+            setStartTime(route.params.arrayObject[route.params.objectIndex].startTime)
+            setEndTime(route.params.arrayObject[route.params.objectIndex].endTime)
+            setDescription(route.params.arrayObject[route.params.objectIndex].description)
+            setProjID(route.params.arrayObject[route.params.objectIndex].projID)
+            setTaskCategoryID(route.params.arrayObject[route.params.objectIndex].taskCategoryID)
+        } else {
+            setStartTime("00:00:00")
+            setEndTime("00:00:00")
+            setDescription("")
+            setProjID("Select")
+            setTaskCategoryID("Select")
+        }
+        GetDropDownData();
+
+    }, [])
+
+    //essfloridahc.truebays.com/?companyCode=001
+
+    const FindObjectWithID = (id, arrayList) => {
+        for (let index = 0; index < arrayList.length; index++) {
+            if (arrayList[index].ID == id) {
+                return arrayList[index];
+            }
+        }
+        return { ID: -1, Description: "Select Item" }
+    }
+
+    const GetDropDownData = () => {
+        GETAPIRequest(`${storeLib.baseUrl}essapi/ListDataApi/DropdownList`, [
+            'companyCode', storeLib.companyCode
+        ]).then(res => {
+            setDropListState(res);
+            setScreenDisplayState(true);
+            console.log(res);
+        }).catch(err => {
+            console.log(err);
+
+        });
+    }
+
+    const getTimeDiff = (startTime, endTime) => {
+
+        let [sh, sm] = startTime.split(":");
+        let [eh, em] = endTime.split(":");
+
+        let startDate = new Date();
+        startDate.setHours(sh);
+        startDate.setMinutes(sm);
+
+        let endDate = new Date();
+        endDate.setHours(eh);
+        endDate.setMinutes(em);
+        let diffSec = (endDate.getTime() - startDate.getTime()) / 1000;
+        let diffMin = diffSec / 60;
+        let diffHrs = diffMin / 60;
+        let hrs = parseInt(diffHrs);
+        let mins = (diffHrs - hrs) * 60;
+        console.log(`${hrs}:${parseInt(mins)}:00`);
+        return "00:00:00"
+    }
+
+    return (
+
+        <ScreenContainer headervisible={false}>
+            {
+                screenDisplayState ?
+                    <ScrollView style={styles.scrollContainer}>
+
+                        <View style={styles.loginContainer}>
+                            <View style={styles.horizontalPaddedContainer}>
+                                <VerticalSpacer height={20 * heightFactor} />
+                                <InputFieldButton
+                                    labelText={"Start Time"}
+                                    value={startTimeState}
+                                    onPress={() => {
+                                        setTimeSelect(true);
+                                        setTimeSlotName("start");
+                                        //    setSelectedTime(newDynamicObject);
+
+                                    }}
+                                />
+                                <InputFieldButton
+                                    labelText={"End Time"}
+                                    value={endTimeState}
+                                    onPress={() => {
+                                        setTimeSelect(true);
+                                        setTimeSlotName("end");
+                                        // setSelectedTime(newDynamicObject);
+                                    }}
+                                />
+                                {
+                                    descriptionState !== null ?
+                                        <InputField
+                                            defaultValue={descriptionState}
+                                            updateValue={(value) => {
+                                                setDescription(value);
+                                                if (route.params.edit) route.params.arrayObject[route.params.objectIndex].description = value;
+                                            }}
+                                            data={"newDynamicObject"}
+                                            value={null}
+                                            multiline={true} numberOfLines={4}
+                                            labelText={"Description"} /> : null
+                                }
+
+                                <DropDownList
+                                    //key={`${componentName.fieldName}${componentName.captionText}`}
+                                    selectedValue={FindObjectWithID(projIDState, dropListState.projectList).Description}
+                                    labelText={"Project ID"}
+                                    dropItems={dropListState.projectList}
+                                    setValueFunction={(itemValue, itemIndex) => {
+                                        setProjID(itemIndex);
+                                        //    newDynamicObject.recordState(itemValue);
+                                        //   console.log(itemValue + JSON.stringify(newDynamicObject));
+                                    }}
+                                />
+
+                                <DropDownList
+                                    //key={`${componentName.fieldName}${componentName.captionText}`}
+                                    selectedValue={FindObjectWithID(taskCategoryIDState, dropListState.taskCategoryList).Description}
+                                    labelText={"Task Type"}
+                                    dropItems={dropListState.taskCategoryList}
+                                    setValueFunction={(itemValue, itemIndex) => {
+                                        setTaskCategoryID(itemIndex);
+                                        //    newDynamicObject.recordState(itemValue);
+                                        //   console.log(itemValue + JSON.stringify(newDynamicObject));
+                                    }}
+                                />
+
+                                <Button_Fill label="Done" onPress={
+                                    () => {
+                                        if (!route.params.edit) {
+                                            route.params.arrayObject != null ?
+                                                route.params.arrayObject.push(
+                                                    {
+                                                        startTime: startTimeState,
+                                                        endTime: endTimeState,
+                                                        description: descriptionState,
+                                                        id: -1,
+                                                        slno: route.params.arrayObject.length + 1,
+                                                        taskHours: getTimeDiff(startTimeState, endTimeState),
+                                                        projID: projIDState,
+                                                        taskCategoryID: taskCategoryIDState
+                                                    }
+                                                ) : route.params.arrayObject = [
+                                                    {
+                                                        startTime: startTimeState,
+                                                        endTime: endTimeState,
+                                                        description: descriptionState,
+                                                        id: -1,
+                                                        slno: 1,
+                                                        taskHours: getTimeDiff(startTimeState, endTimeState),
+                                                        projID: projIDState,
+                                                        taskCategoryID: taskCategoryIDState
+                                                    }
+                                                ];
+                                            console.log(route.params.arrayObject);
+                                        }
+                                        else {
+                                            route.params.arrayObject[route.params.objectIndex].taskHours = getTimeDiff(startTimeState, endTimeState)
+                                            route.params.arrayObject[route.params.objectIndex].projID = projIDState;
+                                            route.params.arrayObject[route.params.objectIndex].taskCategoryID = taskCategoryIDState;
+                                            route.params.arrayObject[route.params.objectIndex].startTime = startTimeState;
+                                            route.params.arrayObject[route.params.objectIndex].endTime = endTimeState;
+                                        }
+
+                                        navigation.pop()
+
+                                        //    CheckAuthentication(userName, password);
+                                        //    setisAuthentication(true);
+
+                                    }
+                                } />
+                            </View>
+                        </View>
+
+                        <View>{
+                            timeSelect ?
+                                <DateTimePicker
+                                    testID="dateTimePicker"
+                                    value={new Date()}
+                                    mode={"time"}
+                                    is24Hour={true}
+                                    display="default"
+                                    onChange={(evet, time = null) => {
+                                        setTimeSelect(false);
+                                        if (evet.type === 'set') {
+                                            let hourText = time.getHours();
+                                            let minuteText = time.getMinutes();
+                                            let combinedTime = `${hourText}:${minuteText}:00`;
+
+                                            //setselectedTime(timeOut => timeOut.paramValue = combinedTime);
+
+                                            switch (timeSlotName) {
+                                                case "start":
+                                                    if (route.params.edit) route.params.arrayObject[route.params.objectIndex].startTime = combinedTime;
+                                                    setStartTime(combinedTime);
+                                                    break;
+
+                                                case "end":
+                                                    if (route.params.edit) route.params.arrayObject[route.params.objectIndex].endTime = combinedTime;
+                                                    setEndTime(combinedTime);
+                                                    break;
+
+                                                default:
+                                                    break;
+                                            }
+                                            //settimeSheetValue(route.params.arrayObject[route.params.objectIndex]);
+                                            console.log(route.params.arrayObject);
+                                            // this.forc
+                                        }
+                                    }}
+                                /> : null
+
+
+                        }</View>
+
+                    </ScrollView> : null
+            }
+        </ScreenContainer>
+    )
+
+}
+
 export const DataListDisplay_Screen = ({ navigation, route }) => {
 
     const [displaySpinner, setDisplaySpinner] = useState(false)
@@ -890,6 +1144,7 @@ export const DataListDisplay_Screen = ({ navigation, route }) => {
             'type', route.params.targetTypeID
         ])
             .then(res => {
+                //    console.log(res);
                 setRecordArray(res.Data);
                 setApplicationStatus(res.StatusList);
                 setrerender(false);
@@ -927,8 +1182,8 @@ export const DataListDisplay_Screen = ({ navigation, route }) => {
 
         switch (pageData.listFieldType) {
             case "DateAddressRemarkStrip":
-
                 return (
+
                     <DateAddressRemarkStrip
                         label={
                             ShortenText(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.titleKey))
@@ -965,6 +1220,45 @@ export const DataListDisplay_Screen = ({ navigation, route }) => {
                         }}
                     />
                 )
+
+                case "WorkLogStrip":
+                    return (
+                        <WorkLogStrip
+                            label={
+                                ShortenText(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.titleKey))
+                            }
+                            subNote={
+                                GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.subNoteKey)
+                            }
+                            date={
+                                GetDateWithSpacer(new Date(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.dateKey)), " ", true)
+                            }
+                            onDeletePress={() => {
+                                setdeletePopup(!deletePopup);
+                                setcurrentDeleteItem(item);
+                            }}
+    
+                            fileStatus={
+                                statusArray
+                            }
+                            rplyStatus={
+                                item
+                            }    
+                            onEditPress={() => {
+                                navigation.push('DynamicAddEdit',
+                                    {
+                                        targetTypeID: route.params.targetTypeID,
+                                        pageFormat: route.params.sectionFormat,
+                                        edit: true,
+                                        data:
+                                        {
+                                            item: item
+                                        }
+                                    })
+                            }}
+                        />
+                    )
+
             default:
                 break;
         }
@@ -1035,9 +1329,20 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
     const [selectedDate, setselectedDate] = useState(null)
     const [selectedTime, setselectedTime] = useState(null)
 
+    const [deletePopup, setdeletePopup] = useState(false)
+    const [selectedTimeSlotData, setSelectedTimeSlotData] = useState(null)
+
+    const [test, setTest] = useState()
+
     const holderArray = [];
 
     useEffect(() => {
+
+        const unsubscribe = navigation.addListener('focus', () => {
+            setTest(Math.random())
+
+        });
+
 
         let indexRecord = 0;
         route.params?.pageFormat.subPage[0].dynamicElements.map((item, index) => {
@@ -1060,18 +1365,25 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
 
 
         return (() => {
+            unsubscribe;
+            setTest(Math.random());
             setdynamicDataHolder([]);
             console.log("Clean - up");
+            setTest();
         });
     }, []);
 
 
     const onButtonClick = () => {
-
         SendDataToServer();
-
     };
 
+    const DeleteItemFromList = (data) => {
+        console.log(data);
+        if (data.index == 0) data.arrayData.shift();
+        else data.arrayData.splice(data.index);
+
+    }
 
     const SendDataToServer = () => {
 
@@ -1094,6 +1406,8 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
         POSTAPIRequest(submitFormat, `${storeLib.baseUrl}${route.params.pageFormat.saveUrl}`, neoSendDataFormat)
             .then(res => console.log(res))
             .catch(err => console.log(err));
+
+        console.log(`${storeLib.baseUrl}${route.params.pageFormat.saveUrl}`);
 
         navigation.pop();
     }
@@ -1121,13 +1435,31 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
         newDynamicObject.index = index;
         newDynamicObject.parameterKeyName = componentName.objectParameterKey;
         let defaultValue = null;
+
+
         if (route.params.edit) {
+
             defaultValue = GetValueOfKey(route.params.data.item, newDynamicObject.parameterKeyName);
             defaultValue = componentName.fieldName == "DateBox" ? GetDateWithSpacer(new Date(defaultValue), " ", true) : defaultValue
             console.log(defaultValue);
             newDynamicObject.recordState(defaultValue);
-        }
 
+        }
+        else {
+            /*
+            console.log("On ADD...");
+            componentName.fieldName !== "TimeSheet" ?
+
+                defaultValue = [
+                    {
+                        startTime: '00:00:00',
+                        endDate: '00:00:00',
+                        description: 'test'
+                    }]
+
+                : null;
+                    */
+        }
 
         switch (componentName.fieldName) {
             case "DateBox":
@@ -1146,7 +1478,7 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
                 }
                 break;
 
-            case "TimeBox":
+            case "Time":
                 newDynamicObject.renderObject = () => {
                     return (
                         <InputFieldButton
@@ -1158,6 +1490,52 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
                                 setselectedTime(newDynamicObject);
                             }
                             } />
+                    )
+                }
+                break;
+
+            case "TimeSheet":
+                newDynamicObject.renderObject = () => {
+
+                    console.log("On Edit...");
+                    if (!route.params.edit && newDynamicObject.paramValue == null) {
+                        newDynamicObject.recordState([])
+                    };
+
+                    return (
+
+                        <TimeListEditor
+                            key={`${componentName.fieldName}${componentName.captionText}`}
+                            value={newDynamicObject.paramValue}
+                            labelText={componentName.captionText}
+                            onPress={() => {
+                                settimeEdit(true);
+                                setselectedTime(newDynamicObject);
+                            }}
+                            onAddPress={(arrayObject) => {
+                                navigation.push('TimeSheetScreen',
+                                    {
+                                        edit: false,
+                                        arrayObject: arrayObject,
+                                        objectIndex: 0
+                                    })
+                            }}
+                            onEditPress={(objectIndex, arrayObject) => {
+                                navigation.push('TimeSheetScreen',
+                                    {
+                                        edit: true,
+                                        arrayObject: arrayObject,
+                                        objectIndex: objectIndex
+                                    })
+                            }
+
+                            }
+                            onDeletePress={(objectIndex, arrayObject) => {
+                                setdeletePopup(!deletePopup);
+                                setSelectedTimeSlotData({ index: objectIndex, arrayData: arrayObject })
+                            }
+                            }
+                        />
                     )
                 }
                 break;
@@ -1213,7 +1591,7 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
                 newDynamicObject.renderObject = () => {
                     return (
                         <Button_Fill
-                            key={`${componentName.fieldName}${componentName.captionText}`}
+                            key={`${componentName.fieldName}${componentName.captionText}${test}`}
                             label={componentName.captionText}
                             onPress={
                                 () => {
@@ -1299,6 +1677,18 @@ export const DynamicAddEdit_Screen = ({ navigation, route }) => {
 
                 }</View>
             </ScrollView>
+            <DialoguePopup
+                onPressCancel={() =>
+                    setdeletePopup(!deletePopup)
+                }
+                onPressOk={() => {
+                    DeleteItemFromList(selectedTimeSlotData)
+                    setdeletePopup(!deletePopup)
+                }}
+
+                getOut={() =>
+                    setdeletePopup(!deletePopup)}
+                visible={deletePopup} />
         </ScreenContainer>
     );
 }

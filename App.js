@@ -14,7 +14,8 @@ import {
   DataListDisplay_Screen,
   ClanderDetailsView_Screen,
   PayslipSheet_Screen,
-  Register_Screen
+  Register_Screen,
+  TimeSheetAddEdit_Screen
 } from './TestScreens/Screens.js'
 
 
@@ -49,7 +50,8 @@ export default function App() {
 
         <Stack.Screen  name="PayslipScreen" component={PayslipSheet_Screen} />
         <Stack.Screen  name="RegisterScreen" component={Register_Screen} />
-
+        
+        <Stack.Screen  name="TimeSheetScreen" component={TimeSheetAddEdit_Screen} />
 
       </Stack.Navigator>
     </NavigationContainer>
