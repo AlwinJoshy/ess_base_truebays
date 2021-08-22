@@ -762,7 +762,7 @@ export const Login_Screen = ({ navigation }) => {
     }, [])
 
     const CheckAuthentication = (userID, password) => {
-        POSTAPIRequest("POST", `${storeLib.baseUrl}ESSApi/LoginAuthenticationApi/`, { userID: userID, Password: password })
+        POSTAPIRequest("POST", `${storeLib.baseUrl}essapi/LoginAuthenticationApi/`, { userID: userID, Password: password })
             .then(
                 res => {
                     //    console.log(res);
