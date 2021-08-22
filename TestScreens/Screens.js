@@ -141,8 +141,6 @@ const BackButtonText = (navigation) => {
     );
 }
 
-const dashboardScaleIOS = (Platform.OS === 'ios' ? 2 : 1);
-
 export const Dashboard_Screen = ({ navigation }) => {
     return (
         <Tab.Navigator

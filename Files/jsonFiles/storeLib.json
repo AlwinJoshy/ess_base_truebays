@@ -1,7 +1,7 @@
 {
     "companyCode": "001",
-    "baseUrl": "http://essfloridahc.truebays.com/",
-    "shiftSection": "false",
-    "payslipSection": "true",
+    "baseUrl": "http://essmodernvet.truebays.com/",
+    "shiftSection": "true",
+    "payslipSection": "false",
     "registration": "true"
 }
