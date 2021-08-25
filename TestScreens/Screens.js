@@ -680,8 +680,6 @@ export const Register_Screen = ({ navigation }) => {
 
     }
 
-
-
     const GoToDashboard = () => {
         navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
     }

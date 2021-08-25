@@ -18,7 +18,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "ess.test.appd"
+      "bundleIdentifier": "com.essmvc.truebays"
     },
     "android": {
       "versionCode": 3,
@@ -27,7 +27,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#edede8"
       },
-      "package": "ess.test.appd"
+      "package": "com.essmvc.truebays"
     },
     "web": {
       "favicon": "./assets/favicon-modernvet.png"
