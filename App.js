@@ -15,7 +15,8 @@ import {
   ClanderDetailsView_Screen,
   PayslipSheet_Screen,
   Register_Screen,
-  TimeSheetAddEdit_Screen
+  TimeSheetAddEdit_Screen,
+  ForgotPassword_Screen
 } from './TestScreens/Screens.js'
 
 
@@ -36,6 +37,8 @@ export default function App() {
 
         <Stack.Screen name="Login" component={Login_Screen} />
 
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword_Screen} />
+
         <Stack.Screen name="Dashboard" component={Dashboard_Screen} />
 
         <Stack.Screen name="Request for Leave" component={RequestForLeave_Screen} />
@@ -48,10 +51,10 @@ export default function App() {
 
         <Stack.Screen name="CalenderDetailView" component={ClanderDetailsView_Screen} />
 
-        <Stack.Screen  name="PayslipScreen" component={PayslipSheet_Screen} />
-        <Stack.Screen  name="RegisterScreen" component={Register_Screen} />
-        
-        <Stack.Screen  name="TimeSheetScreen" component={TimeSheetAddEdit_Screen} />
+        <Stack.Screen name="PayslipScreen" component={PayslipSheet_Screen} />
+        <Stack.Screen name="RegisterScreen" component={Register_Screen} />
+
+        <Stack.Screen name="TimeSheetScreen" component={TimeSheetAddEdit_Screen} />
 
       </Stack.Navigator>
     </NavigationContainer>

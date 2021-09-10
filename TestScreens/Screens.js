@@ -20,7 +20,8 @@ import {
     TextButton, NameAndValueStrip,
     NameAndNumberLargeStrip, aspectRatio,
     Button_Outline, TimeListEditor,
-    WorkLogStrip
+    WorkLogStrip, Button_Text,
+    PINInputField,
 
 } from '../Components/ComponentLibrary.js'
 import { POSTAPIRequest, GETAPIRequest, DELETEAPIRequest, POSTAPIRequest_Combiner } from '../BackendAPI.js'
@@ -498,10 +499,10 @@ export const Request_Screen = ({ navigation }) => {
     return (
         <ScreenContainer>
             <ScrollView style={styles.scrollContainer}>
-            <VerticalSpacer height={20} />
-            {
-                GetMenu(buttonOptionArray)
-            }
+                <VerticalSpacer height={20} />
+                {
+                    GetMenu(buttonOptionArray)
+                }
             </ScrollView>
         </ScreenContainer>
     );
@@ -643,15 +644,111 @@ export const Register_Screen = ({ navigation }) => {
     const [companyID, setCompanyID] = useState(-1)
     const [companyNameList, setCompanyNameList] = useState([
         {
-            Description:"Modern Veterinary Clinic",
+            Description: "Modern Veterinary Clinic",
             ID: 1
         },
         {
-            Description:"MVC",
+            Description: "MVC",
             ID: 2
         }
     ])
 
+    useEffect(() => {
+        GetCompanyNameList();
+        return () => { }
+    }, [])
+
+    const ConvertFormat = (companyDataAttay) => {
+        dataList = [];
+
+        for (let index = 0; index < companyDataAttay.length; index++) {
+
+            dataList.push({
+                Description: companyDataAttay[index].CompanyName,
+                ID: companyDataAttay[index].CompanyCode
+            })
+        }
+        return dataList;
+    }
+
+    const GetCompanyNameList = () => {
+
+        GETAPIRequest(`${storeLib.baseUrl}essapi/UserRegistrationApi/companyDetails/`,
+            []).then(res => {
+                setCompanyNameList(ConvertFormat(res));
+                console.log(ConvertFormat(res));
+            }).catch(err => console.log(err));
+
+    }
+
+    const GoToDashboard = () => {
+        navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
+    }
+
+    return (
+        <ScreenContainer headervisible={false}>
+            <ScrollView style={styles.scrollContainer}>
+                <View style={{ width: "100%", alignItems: 'center' }}>
+
+                </View>
+
+                <View style={styles.loginContainer}>
+                    <View style={styles.horizontalPaddedContainer}>
+
+                        <VerticalSpacer height={200 * aspectRatio} />
+                        <InputField labelText={"Username"} onChangeText={(value) => setUserName(value)} />
+                        <InputField labelText={"E-mail"} onChangeText={(value) => setUserEmail(value)} />
+                        <InputField labelText={"Contact Number"} onChangeText={(value) => setUserEmail(value)} />
+                        <DropDownList
+                            //key={`${componentName.fieldName}${componentName.captionText}`}
+                            selectedValue={null}
+                            labelText={"Project ID"}
+                            dropItems={companyNameList}
+                            setValueFunction={(itemValue, itemIndex) => {
+                                setCompanyID(itemIndex);
+                                //    newDynamicObject.recordState(itemValue);
+                                //   console.log(itemValue + JSON.stringify(newDynamicObject));
+                            }}
+                        />
+                        <ErrorMessage visible={errorFound} msgType={messageColor} messageText={errorMessage} />
+                        <Button_Fill label="Submit" onPress={
+                            () => {
+                                //navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
+                                //    CheckAuthentication(userName, password);
+                                //   setisAuthentication(true);
+                            }
+                        } />
+                        <Button_Outline marginTop={10} label="Back to Login" onPress={
+                            () => {
+                                navigation.pop();
+                            }
+                        } />
+                        <VerticalSpacer height={30 * heightFactor} />
+                    </View>
+
+
+
+                </View>
+
+                <Spinner
+                    visible={isAuthentication}
+                    textContent={'Loading...'}
+                />
+            </ScrollView>
+        </ScreenContainer>
+    );
+
+}
+
+export const ForgotPassword_Screen = ({ navigation }) => {
+
+    const [isAuthentication, setisAuthentication] = useState(false)
+    const [errorFound, seterrorFound] = useState(false)
+    const [errorMessage, seterrorMessage] = useState("")
+    const [messageColor, setmessageColor] = useState(1)
+    const [screenState, setScreenState] = useState("enterDetails")
+
+    /*
     useEffect(() => {
         GetCompanyNameList();
         return () => { }
@@ -680,56 +777,82 @@ export const Register_Screen = ({ navigation }) => {
 
     }
 
-
-
     const GoToDashboard = () => {
         navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
     }
 
+    */
     return (
         <ScreenContainer headervisible={false}>
             <ScrollView style={styles.scrollContainer}>
                 <View style={{ width: "100%", alignItems: 'center' }}>
 
                 </View>
+                {
+                    <View style={styles.loginContainer}>
+                        <View style={styles.horizontalPaddedContainer}>
 
-                <View style={styles.loginContainer}>
-                    <View style={styles.horizontalPaddedContainer}>
+                            <VerticalSpacer height={200 * aspectRatio} />
+                            {
+                                screenState == "enterDetails" ?
+                                    <View>
+                                        <InputField labelText={"E-mail"} onChangeText={(value) => setUserEmail(value)} />
+                                        <InputField labelText={"Contact Number"} onChangeText={(value) => setUserEmail(value)} />
+                                        <ErrorMessage visible={errorFound} msgType={messageColor} messageText={errorMessage} />
+                                        <Button_Fill label="Submit" onPress={
+                                            () => {
+                                                setScreenState("enterPin");
+                                                //navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
+                                                //    CheckAuthentication(userName, password);
+                                                //   setisAuthentication(true);
+                                            }
+                                        } />
+                                    </View> :
+                                    screenState == "enterPin" ?
+                                        <View>
+                                            <PINInputField numSize={5} labelText={"PIN"} onChangeText={(value) => setUserEmail(value)} />
+                                            <Button_Text marginTop={1} label="Re-send PIN?" onPress={
+                                                () => {
+                                                    alert("new PIN send to your email")
+                                                    //navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
+                                                    //    CheckAuthentication(userName, password);
+                                                    //   setisAuthentication(true);
+                                                }
+                                            } />
+                                            <Button_Fill label="Submit" onPress={
+                                                () => {
+                                                    setScreenState("enterNewPassword");
+                                                    //navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
+                                                    //    CheckAuthentication(userName, password);
+                                                    //   setisAuthentication(true);
+                                                }
+                                            } />
+                                        </View> :
+                                        screenState == "enterNewPassword" ?
+                                            <View>
+                                                <InputField labelText={"New Password"} onChangeText={(value) => setUserEmail(value)} />
+                                                <InputField labelText={"Confirm Password"} onChangeText={(value) => setUserEmail(value)} />
+                                                <ErrorMessage visible={errorFound} msgType={messageColor} messageText={errorMessage} />
+                                                <Button_Fill label="Submit" onPress={
+                                                    () => {
+                                                        //navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
+                                                        //    CheckAuthentication(userName, password);
+                                                        //   setisAuthentication(true);
+                                                    }
+                                                } />
+                                            </View> : <></>
 
-                        <VerticalSpacer height={200 * aspectRatio} />
-                        <InputField labelText={"Username"} onChangeText={(value) => setUserName(value)} />
-                        <InputField labelText={"E-mail"} onChangeText={(value) => setUserEmail(value)} />
-                        <InputField labelText={"Contact Number"} onChangeText={(value) => setUserEmail(value)} />
-                        <DropDownList
-                                    //key={`${componentName.fieldName}${componentName.captionText}`}
-                                    selectedValue={null}
-                                    labelText={"Project ID"}
-                                    dropItems={companyNameList}
-                                    setValueFunction={(itemValue, itemIndex) => {
-                                        setCompanyID(itemIndex);
-                                        //    newDynamicObject.recordState(itemValue);
-                                        //   console.log(itemValue + JSON.stringify(newDynamicObject));
-                                    }}
-                                />
-                        <ErrorMessage visible={errorFound} msgType={messageColor} messageText={errorMessage} />
-                        <Button_Fill label="Submit" onPress={
-                            () => {
-                                //navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
-                                //    CheckAuthentication(userName, password);
-                                //   setisAuthentication(true);
                             }
-                        } />
-                        <Button_Outline marginTop={10} label="Back to Login" onPress={
-                            () => {
-                                navigation.pop();
-                            }
-                        } />
-                        <VerticalSpacer height={30 * heightFactor} />
+
+                            <Button_Outline marginTop={10} label="Back to Login" onPress={
+                                () => {
+                                    navigation.pop();
+                                }
+                            } />
+                            <VerticalSpacer height={30 * heightFactor} />
+                        </View>
                     </View>
-
-
-
-                </View>
+                }
 
                 <Spinner
                     visible={isAuthentication}
@@ -762,7 +885,7 @@ export const Login_Screen = ({ navigation }) => {
     }, [])
 
     const CheckAuthentication = (userID, password) => {
-        POSTAPIRequest("POST", `${storeLib.baseUrl}ESSApi/LoginAuthenticationApi/`, { userID: userID, Password: password })
+        POSTAPIRequest("POST", `${storeLib.baseUrl}essapi/LoginAuthenticationApi/`, { userID: userID, Password: password })
             .then(
                 res => {
                     //    console.log(res);
@@ -835,6 +958,15 @@ export const Login_Screen = ({ navigation }) => {
                         <InputField labelText={"Username"} onChangeText={(value) => setUserName(value)} />
                         <InputField labelText={"Password"} onChangeText={(value) => setPassword(value)} secureText={true} />
                         <ErrorMessage visible={errorFound} msgType={messageColor} messageText={errorMessage} />
+                        <Button_Text marginTop={1} label="Forgot Password?" onPress={
+                            () => {
+                                navigation.push(
+                                    "ForgotPassword");
+                                //navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
+                                //    CheckAuthentication(userName, password);
+                                //   setisAuthentication(true);
+                            }
+                        } />
                         <Button_Fill label="Sign in" onPress={
                             () => {
                                 CheckAuthentication(userName, password);
@@ -1219,43 +1351,43 @@ export const DataListDisplay_Screen = ({ navigation, route }) => {
                     />
                 )
 
-                case "WorkLogStrip":
-                    return (
-                        <WorkLogStrip
-                            label={
-                                ShortenText(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.titleKey))
-                            }
-                            subNote={
-                                GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.subNoteKey)
-                            }
-                            date={
-                                GetDateWithSpacer(new Date(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.dateKey)), " ", true)
-                            }
-                            onDeletePress={() => {
-                                setdeletePopup(!deletePopup);
-                                setcurrentDeleteItem(item);
-                            }}
-    
-                            fileStatus={
-                                statusArray
-                            }
-                            rplyStatus={
-                                item
-                            }    
-                            onEditPress={() => {
-                                navigation.push('DynamicAddEdit',
+            case "WorkLogStrip":
+                return (
+                    <WorkLogStrip
+                        label={
+                            ShortenText(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.titleKey))
+                        }
+                        subNote={
+                            GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.subNoteKey)
+                        }
+                        date={
+                            GetDateWithSpacer(new Date(GetValueOfKey(item, GetValueOfKey(menuLookupLib.NotSoDynamic, route.params.targetTypeID).recordDataKeys.dateKey)), " ", true)
+                        }
+                        onDeletePress={() => {
+                            setdeletePopup(!deletePopup);
+                            setcurrentDeleteItem(item);
+                        }}
+
+                        fileStatus={
+                            statusArray
+                        }
+                        rplyStatus={
+                            item
+                        }
+                        onEditPress={() => {
+                            navigation.push('DynamicAddEdit',
+                                {
+                                    targetTypeID: route.params.targetTypeID,
+                                    pageFormat: route.params.sectionFormat,
+                                    edit: true,
+                                    data:
                                     {
-                                        targetTypeID: route.params.targetTypeID,
-                                        pageFormat: route.params.sectionFormat,
-                                        edit: true,
-                                        data:
-                                        {
-                                            item: item
-                                        }
-                                    })
-                            }}
-                        />
-                    )
+                                        item: item
+                                    }
+                                })
+                        }}
+                    />
+                )
 
             default:
                 break;

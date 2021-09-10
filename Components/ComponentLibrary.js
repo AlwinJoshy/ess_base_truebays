@@ -1345,6 +1345,60 @@ const Button_Outline_Style = StyleSheet.create({
 })
 
 
+export class Button_Text extends React.Component {
+    constructor() {
+        super();
+        this.state = {};
+    }
+    render() {
+        return (
+            <TouchableOpacity style={[{ marginTop: this.props.marginTop ? this.props.marginTop : 100 }, Button_Text_Style.componentStyle]} activeOpacity={0.5} onPress={() => this.props.onPress()}>
+                <View style={Button_Text_Style.innerContainer}>
+                    <Text style={Button_Text_Style.labelText}>{this.props.label}</Text>
+                </View>
+            </TouchableOpacity>
+        );
+    }
+}
+
+const Button_Text_Style = StyleSheet.create({
+    componentStyle: {
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    innerContainer: {
+
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 80 * aspectRatio,
+    },
+    labelText: {
+        fontSize: colorPallet.theme.default.buttonTextSize * aspectRatio,
+        color: colorPallet.theme.default.accentColor,
+        fontWeight: '700',
+        textAlign: 'center'
+    },
+    textInput: {
+        width: '100%',
+        height: 30,
+        borderWidth: 0.8,
+        borderColor: 'grey',
+        paddingHorizontal: 5,
+
+    },
+    textInputArea: {
+        width: '100%',
+        height: 100,
+        borderWidth: 0.8,
+        borderColor: 'grey',
+        paddingHorizontal: 5,
+        textAlignVertical: 'top'
+    }
+})
+
+
 export class Button_Fill extends React.Component {
     constructor() {
         super();
@@ -1725,6 +1779,151 @@ const TimeListEditor_Style = StyleSheet.create({
         fontWeight: "700"
     },
 
+})
+
+
+export class PINInputField extends React.Component {
+
+
+
+    constructor() {
+        super();
+        this.state = {
+            value: "1000",
+            numSize: [1, 1, 1],
+            pinValue: ''
+        };
+    }
+
+
+    componentDidMount() {
+        const CreateArray = (count) => {
+            let newArray = []
+            for (let index = 0; index < count; index++) {
+                newArray[index] = index;
+            }
+            return newArray;
+        }
+
+        this.setState({
+            value: this.props.defaultValue,
+            numSize: CreateArray(this.props.numSize)
+        });
+        this.props.defaultValue ? this.props.updateValue(this.props.defaultValue) : null;
+    }
+
+
+
+    render() {
+
+        const SetPinValue = (value) => {
+            this.setState({
+                pinValue: value
+            });
+        }
+
+        return (
+            <View style={PINInputField_Style.componentStyle}>
+                <Text style={PINInputField_Style.labelText}>{this.props.labelText}</Text>
+                <View>
+                    <View style={
+                        {
+                            height: 40,
+                            flexDirection: 'row',
+                            justifyContent: 'space-evenly'
+                        }}>
+                        {
+                            this.state.numSize.map((val, index) => {
+                                return (
+                                    <View style={{
+                                        backgroundColor: 'white',
+                                        height: '100%',
+                                        width: 30,
+                                        borderRadius: 5,
+                                        justifyContent: 'center',
+                                        alignItems: 'center'
+                                    }}>
+                                        <Text style={{ fontSize: 30 }}>{this.state.pinValue[index]}</Text>
+                                    </View>
+                                )
+                            })
+                        }
+
+                    </View>
+                    <TextInput 
+                    keyboardType='numeric'
+                    caretHidden={true}
+                    maxLength={this.state.numSize.length}
+                    onChangeText={(value) => {
+                            SetPinValue(value)
+                    }
+                    } style={{ position: 'absolute', width: '100%', height: '100%', color: 'rgba(0,0,0,0)'}}></TextInput>
+                </View>
+                {
+
+                    /*
+                <TextInput secureTextEntry={this.props.secureText != null && this.props.secureText === true ? true : false}
+                    //value={this.props.data ? this.props.data.paramValue : this.props.value}
+                    value={this.state.value}
+                    onChangeText={(value) => {
+                        this.props.onChangeText ? this.props.onChangeText(value, this.props.data) : null
+                        this.props.data ? (
+                            //this.props.data.recordState(value),
+
+                            this.setState({
+                                value: value
+                            }),
+                            //   this.state.value = value,
+                            this.props.updateValue(value)
+                            //  console.log(JSON.stringify(this.state))
+                        ) : null;
+                    }}
+                    onEndEditing={() => this.props.onEndEditing ? this.props.onEndEditing() : null}
+                    numberOfLines={this.props.numberOfLines}
+                    multiline={this.props.multiline}
+                    style={this.props.multiline ? PINInputField_Style.textInputArea : PINInputField_Style.textInput}></TextInput>
+                */
+                }
+            </View>
+        );
+    }
+}
+
+const PINInputField_Style = StyleSheet.create({
+    componentStyle: {
+        marginVertical: 5,
+    },
+    innerContainer: {
+        marginVertical: 5,
+
+    },
+    labelText: {
+        fontSize: colorPallet.theme.default.labelTextSize * aspectRatio,
+        color: colorPallet.theme.default.labelTextColor,
+        marginBottom: 5,
+        fontWeight: "700"
+    },
+    textInput: {
+        width: '100%',
+        height: 30,
+        paddingHorizontal: 5,
+        borderRadius: 5,
+        borderColor: colorPallet.theme.default.neutral,
+        borderWidth: 0.5,
+        color: 'black',
+        backgroundColor: colorPallet.theme.default.secondaryDefinitionColor
+    },
+    textInputArea: {
+        width: '100%',
+        height: 100,
+        backgroundColor: colorPallet.theme.default.secondaryDefinitionColor,
+        borderColor: colorPallet.theme.default.neutral,
+        borderWidth: 0.5,
+        paddingHorizontal: 5,
+        borderRadius: 5,
+        textAlignVertical: 'top',
+        color: 'black'
+    }
 })
 
 export class InputField extends React.Component {
