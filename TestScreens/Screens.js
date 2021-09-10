@@ -36,7 +36,7 @@ import {
     SetUserName, GetUserID,
     GetUserName, UserDetails,
     SetUserPassword, GetAuthenticationDetails,
-    ClearAunthetication
+    ClearAunthetication, GetUserPassword
 } from '../Authentication.js';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { FlatList } from 'react-native-gesture-handler'
@@ -328,6 +328,17 @@ export const Info_Screen = ({ navigation }) => {
     }
 
     const SendData = () => {
+        return (
+            <TextButton
+                buttonText={"Settings"}
+                onPress={() => {
+                    navigation.push("Settings")
+                }}
+            />
+        );
+    }
+
+    const SendData_Old = () => {
         return (
             <TextButton
                 buttonText={"Logout"}
@@ -740,6 +751,169 @@ export const Register_Screen = ({ navigation }) => {
 
 }
 
+export const Settings_Screen = ({ navigation }) => {
+
+    const [isAuthentication, setisAuthentication] = useState(false)
+
+    return (
+        <ScreenContainer headervisible={false}>
+            <ScrollView style={styles.scrollContainer}>
+                <View style={{ width: "100%", alignItems: 'center' }}>
+
+                </View>
+                {
+                    <View style={styles.loginContainer}>
+                        <View style={styles.horizontalPaddedContainer}>
+
+                            <VerticalSpacer height={200 * aspectRatio} />
+                            {
+
+                            }
+
+                            <Button_Fill label="Log-Out" onPress={
+                                () => {
+                                    ClearAunthetication();
+                                    navigation.reset({ index: 0, routes: [{ name: 'Login' }] })
+                                }
+                            } />
+                            <Button_Fill marginTop={10} label="Change Password" onPress={
+                                () => {
+                                    navigation.push("ChangePassword");
+                                }
+                            } />
+
+                            <Button_Outline marginTop={100} label="Back" onPress={
+                                () => {
+                                    navigation.pop();
+                                }
+                            } />
+                            <VerticalSpacer height={30 * heightFactor} />
+                        </View>
+                    </View>
+                }
+
+                <Spinner
+                    visible={isAuthentication}
+                    textContent={'Loading...'}
+                />
+            </ScrollView>
+        </ScreenContainer>
+    );
+
+}
+
+
+export const ChangePassword_Screen = ({ navigation }) => {
+
+    const [isAuthentication, setisAuthentication] = useState(false)
+    const [errorFound, seterrorFound] = useState(false)
+    const [errorMessage, seterrorMessage] = useState("")
+    const [messageColor, setmessageColor] = useState(1)
+    const [currentPassword, setCurrentPassword] = useState("")
+    const [newPassword, setNewPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
+
+    const ChangePasswordAPI = () => {
+        POSTAPIRequest("POST", `${storeLib.baseUrl}essapi/ChangePasswordApi/ChangePassword/`,
+            {
+                LoginID: GetUserID(),
+                OldPassword: currentPassword,
+                NewPassword: newPassword,
+                ConfirmPassword: confirmPassword
+            })
+            .then(res => {
+                console.log(res)
+                setisAuthentication(false)
+                if(res == "Success"){
+                    navigation.pop();
+                    alert("Password Succesfully Changed")
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                setisAuthentication(false)
+                seterrorFound(true);
+                setmessageColor(0)
+            });
+    }
+
+
+
+    const SetNewPassword = () => {
+
+        if (currentPassword != GetUserPassword()) {
+            seterrorFound(true);
+            seterrorMessage("Please Enter Valid Current Password");
+            setmessageColor(0)
+            console.log(GetUserPassword());
+        }
+        else if (newPassword.length < 8) {
+            seterrorFound(true);
+            seterrorMessage("Password must have 8 characters");
+            setmessageColor(1)
+        }
+        else if (newPassword != confirmPassword) {
+            seterrorFound(true);
+            seterrorMessage("Password and Confirm doesn't match");
+            setmessageColor(1)
+        }
+        else {
+            setisAuthentication(true);
+            ChangePasswordAPI();
+            seterrorMessage("Please Wait.");
+            setmessageColor(2)
+        }
+    }
+
+    return (
+        <ScreenContainer headervisible={false}>
+            <ScrollView style={styles.scrollContainer}>
+                <View style={{ width: "100%", alignItems: 'center' }}>
+
+                </View>
+                {
+                    <View style={styles.loginContainer}>
+                        <View style={styles.horizontalPaddedContainer}>
+
+                            <VerticalSpacer height={200 * aspectRatio} />
+                            {
+
+                            }
+
+                            <View>
+                                <InputField labelText={"Current Password"} onChangeText={(value) => setCurrentPassword(value)} />
+                                <InputField labelText={"New Password"} onChangeText={(value) => setNewPassword(value)} />
+                                <InputField labelText={"Confirm Password"} onChangeText={(value) => setConfirmPassword(value)} />
+                                <ErrorMessage visible={errorFound} msgType={messageColor} messageText={errorMessage} />
+                                <Button_Fill label="Confirm" onPress={
+                                    () => {
+                                        SetNewPassword();
+                                    }
+                                } />
+                            </View>
+
+
+                            <Button_Outline marginTop={10} label="Back" onPress={
+                                () => {
+                                    navigation.pop();
+                                }
+                            } />
+                            <VerticalSpacer height={30 * heightFactor} />
+                        </View>
+                    </View>
+                }
+
+                <Spinner
+                    visible={isAuthentication}
+                    textContent={'Loading...'}
+                />
+            </ScrollView>
+        </ScreenContainer>
+    );
+
+}
+
+
 export const ForgotPassword_Screen = ({ navigation }) => {
 
     const [isAuthentication, setisAuthentication] = useState(false)
@@ -888,7 +1062,7 @@ export const Login_Screen = ({ navigation }) => {
         POSTAPIRequest("POST", `${storeLib.baseUrl}essapi/LoginAuthenticationApi/`, { userID: userID, Password: password })
             .then(
                 res => {
-                    //    console.log(res);
+                    console.log(res);
                     res.UserFullName ?
                         (
                             UserDetails(res),

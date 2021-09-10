@@ -16,7 +16,9 @@ import {
   PayslipSheet_Screen,
   Register_Screen,
   TimeSheetAddEdit_Screen,
-  ForgotPassword_Screen
+  ForgotPassword_Screen,
+  ChangePassword_Screen,
+  Settings_Screen
 } from './TestScreens/Screens.js'
 
 
@@ -38,6 +40,10 @@ export default function App() {
         <Stack.Screen name="Login" component={Login_Screen} />
 
         <Stack.Screen name="ForgotPassword" component={ForgotPassword_Screen} />
+
+        <Stack.Screen name="ChangePassword" component={ChangePassword_Screen} />
+
+        <Stack.Screen name="Settings" component={Settings_Screen} />
 
         <Stack.Screen name="Dashboard" component={Dashboard_Screen} />
 

@@ -31,10 +31,13 @@ export const GetAuthenticationDetails = async () => {
         const valueName = await AsyncStorage.getItem('userName');
         if (valueName !== null && valueName !== "") {
             const valueID = await AsyncStorage.getItem('userID');
-            console.log(valueName + "-" + valueID);
+
+            const valuePassword = await AsyncStorage.getItem('userPassword');
+            console.log(valueName + "-" + valueID + "-" + valuePassword);
 
             AuthUserName = valueName;
             AuthUserID = valueID;
+            AuthUserPassword = valuePassword;
 
             return true;
         } else {
@@ -76,4 +79,8 @@ export const GetUserID = () => {
 
 export const GetUserName = () => {
     return AuthUserName;
+}
+
+export const GetUserPassword = () => {
+    return AuthUserPassword;
 }
