@@ -4,7 +4,7 @@ import {
     StyleSheet, SafeAreaView,
     ScrollView, Dimensions,
     Image, RefreshControl,
-    Platform, StatusBar
+    Platform, StatusBar, Alert
 } from 'react-native'
 import {
     InfoCard, DialoguePopup,
@@ -824,7 +824,7 @@ export const ChangePassword_Screen = ({ navigation }) => {
             .then(res => {
                 console.log(res)
                 setisAuthentication(false)
-                if(res == "Success"){
+                if (res == "Success") {
                     navigation.pop();
                     alert("Password Succesfully Changed")
                 }
@@ -921,6 +921,7 @@ export const ForgotPassword_Screen = ({ navigation }) => {
     const [errorMessage, seterrorMessage] = useState("")
     const [messageColor, setmessageColor] = useState(1)
     const [screenState, setScreenState] = useState("enterDetails")
+    const [UserEmail, setUserEmail] = useState()
 
     /*
     useEffect(() => {
@@ -956,6 +957,39 @@ export const ForgotPassword_Screen = ({ navigation }) => {
     }
 
     */
+
+    const SendPasswordResetEmail = () => {
+        POSTAPIRequest("POST", `${storeLib.baseUrl}essapi/ForgotPasswordApi/ForgotPassword`,
+            {
+                data: {
+                    email: UserEmail
+                }
+            })
+            .then(res => {
+                console.log(res)
+                switch (res) {
+                    case "Not registered user.":
+                        setisAuthentication(false);
+                        setmessageColor(1);
+                        seterrorFound(true);
+                        seterrorMessage("Not registered email id");
+                        break;
+
+                    case "Successfully sent email.":
+                        setisAuthentication(false);
+                        navigation.pop();
+                        break;
+
+                    default:
+                        setisAuthentication(false);
+                        break;
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            });
+    }
+
     return (
         <ScreenContainer headervisible={false}>
             <ScrollView style={styles.scrollContainer}>
@@ -971,11 +1005,12 @@ export const ForgotPassword_Screen = ({ navigation }) => {
                                 screenState == "enterDetails" ?
                                     <View>
                                         <InputField labelText={"E-mail"} onChangeText={(value) => setUserEmail(value)} />
-                                        <InputField labelText={"Contact Number"} onChangeText={(value) => setUserEmail(value)} />
                                         <ErrorMessage visible={errorFound} msgType={messageColor} messageText={errorMessage} />
                                         <Button_Fill label="Submit" onPress={
                                             () => {
-                                                setScreenState("enterPin");
+                                                setisAuthentication(true);
+                                                SendPasswordResetEmail();
+                                                // setScreenState("enterPin");
                                                 //navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }] })
                                                 //    CheckAuthentication(userName, password);
                                                 //   setisAuthentication(true);
